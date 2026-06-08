@@ -2,7 +2,8 @@
 <section class="hero">
   <div class="hero__bg">
     {%- if section.settings.image -%}
-      {{ section.settings.image | image_url: width: 2400 | image_tag: loading: 'eager', fetchpriority: 'high', alt: section.settings.heading | strip_html, sizes: '100vw', widths: '750,1100,1500,2000,2400' }}
+      {%- assign hero_alt = section.settings.heading | strip_html -%}
+      {{ section.settings.image | image_url: width: 2400 | image_tag: loading: 'eager', fetchpriority: 'high', alt: hero_alt, sizes: '100vw', widths: '750,1100,1500,2000,2400' }}
     {%- else -%}
       {{ 'hero-honey.jpg' | asset_url | image_url: width: 2400 | image_tag: loading: 'eager', alt: 'Mazah perfume', sizes: '100vw' }}
     {%- endif -%}

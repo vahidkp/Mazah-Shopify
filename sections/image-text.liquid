@@ -2,7 +2,8 @@
 <section class="about-intro reveal">
   <div class="about-intro__media">
     {%- if section.settings.image -%}
-      {{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: section.settings.heading | strip_html, sizes: '(max-width:768px) 100vw, 50vw' }}
+      {%- assign image_text_alt = section.settings.heading | strip_html -%}
+      {{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: image_text_alt, sizes: '(max-width:768px) 100vw, 50vw' }}
     {%- endif -%}
   </div>
   <div>

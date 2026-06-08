@@ -12,7 +12,8 @@
     </div>
     <div class="boutique__media">
       {%- if section.settings.image -%}
-        {{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: section.settings.heading | strip_html, sizes: '(max-width:640px) 100vw, 40vw' }}
+        {%- assign boutique_alt = section.settings.heading | strip_html -%}
+        {{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: boutique_alt, sizes: '(max-width:640px) 100vw, 40vw' }}
       {%- endif -%}
     </div>
   </div>
