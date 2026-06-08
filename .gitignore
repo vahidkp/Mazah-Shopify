@@ -1,0 +1,17 @@
+# Environment / secrets — never commit these
+.env
+.env.*
+!.env.example
+
+# Shopify CLI
+.shopify/
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node (if tooling is added)
+node_modules/
