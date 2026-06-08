@@ -1,0 +1,36 @@
+{%- comment -%} Search results page {%- endcomment -%}
+<div class="plp">
+  <h1 style="font-family:var(--font-display);font-size:1.875rem;font-weight:700;letter-spacing:-.04em;margin-bottom:8px">Search</h1>
+
+  <form action="{{ routes.search_url }}" method="get" role="search" class="plp-search" style="max-width:32rem;margin-bottom:24px">
+    {% render 'icon', name: 'search', size: 15 %}
+    <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search scents, brands, ingredients" aria-label="Search">
+  </form>
+
+  {%- if search.performed -%}
+    <p class="plp-count" style="margin-bottom:16px">{{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %} for &ldquo;{{ search.terms | escape }}&rdquo;</p>
+    {%- if search.results.size > 0 -%}
+      {%- paginate search.results by 16 -%}
+        <div class="plp-grid">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              {% render 'product-card', product: item %}
+            {%- else -%}
+              <a href="{{ item.url }}" class="rte" style="border:1px solid var(--line);border-radius:var(--radius-card);padding:20px;display:block">
+                <p style="font-weight:600">{{ item.title }}</p>
+                <p class="muted" style="font-size:.875rem;margin-top:4px">{{ item.content | strip_html | truncatewords: 20 }}</p>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- if paginate.pages > 1 -%}<div style="margin-top:32px;text-align:center">{{ paginate | default_pagination }}</div>{%- endif -%}
+      {%- endpaginate -%}
+    {%- else -%}
+      <div class="plp-empty"><p>No perfumes found</p><p class="muted" style="margin-top:8px">Try a different search term.</p></div>
+    {%- endif -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{ "name": "Search", "settings": [] }
+{% endschema %}

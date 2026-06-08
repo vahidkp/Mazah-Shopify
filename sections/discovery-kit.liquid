@@ -1,0 +1,96 @@
+{%- comment -%} Discovery Kit landing — sample grid + add-to-cart {%- endcomment -%}
+{%- liquid
+  assign kit = all_products[section.settings.kit_product]
+  assign samples_coll = collections[section.settings.samples_collection]
+  assign price = section.settings.kit_price | default: 19
+-%}
+
+<section class="dk-hero">
+  <div class="dk-visual">
+    <div class="dk-visual__grid">
+      {%- for product in samples_coll.products limit: 6 -%}
+        <div class="dk-visual__cell" style="background-color: {{ product.metafields.custom.tint | default: '#F4F1EC' }}">
+          {%- if product.featured_image -%}{{ product.featured_image | image_url: width: 240 | image_tag: loading: 'lazy', class: 'blend-multiply', alt: product.title }}{%- endif -%}
+        </div>
+      {%- else -%}
+        {%- for i in (1..6) -%}<div class="dk-visual__cell" style="background:var(--card)"></div>{%- endfor -%}
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <div class="dk-info">
+    <p class="eyebrow" style="color:var(--coral)">{{ section.settings.eyebrow | default: 'Try Before You Buy' }}</p>
+    <h1>{{ section.settings.heading }}</h1>
+    <div class="dk-info__price">
+      {%- if kit -%}
+        <span class="num">{{ kit.price | money }}</span>
+      {%- else -%}
+        <span class="num">${{ price }}</span>
+      {%- endif -%}
+      <span class="sub">{{ section.settings.price_caption | default: 'for 6 × 2ml samples' }}</span>
+    </div>
+    <p class="lead-copy">{{ section.settings.body }}</p>
+
+    <ul>
+      {%- assign points = section.settings.bullets | newline_to_br | split: '<br />' -%}
+      {%- for point in points -%}
+        {%- assign p = point | strip -%}
+        {%- if p != blank -%}
+          <li><span class="ic">{% render 'icon', name: 'check', size: 12 %}</span><span>{{ p }}</span></li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+
+    <div class="dk-info__btns">
+      {%- if kit and kit.first_available_variant -%}
+        <button type="button" class="btn btn--solid btn--lg" data-add-to-cart data-variant-id="{{ kit.first_available_variant.id }}">Add Discovery Kit — {{ kit.price | money }}</button>
+      {%- elsif section.settings.fallback_url != blank -%}
+        <a href="{{ section.settings.fallback_url }}" class="btn btn--solid btn--lg">Shop the Collection</a>
+      {%- endif -%}
+      {%- if section.settings.quiz_url != blank -%}
+        <a href="{{ section.settings.quiz_url }}" class="btn btn--outline btn--lg">{% render 'icon', name: 'sparkles', size: 15 %} Take the Quiz</a>
+      {%- endif -%}
+    </div>
+    <p class="muted" style="font-size:.75rem">Free shipping over {{ settings.free_ship_threshold | default: 100 | times: 100 | money_without_trailing_zeros }} · 30-day returns</p>
+  </div>
+</section>
+
+{%- if samples_coll.products.size > 0 -%}
+  <section class="dk-inside">
+    <div class="container-page">
+      <h2>What&rsquo;s inside</h2>
+      <div class="dk-inside__grid">
+        {%- for product in samples_coll.products limit: 6 -%}
+          <a href="{{ product.url }}" class="dk-sample">
+            <div class="dk-sample__media" style="background-color: {{ product.metafields.custom.tint | default: '#F4F1EC' }}">
+              {%- if product.featured_image -%}{{ product.featured_image | image_url: width: 96 | image_tag: loading: 'lazy', class: 'blend-multiply', alt: product.title }}{%- endif -%}
+            </div>
+            <div style="min-width:0">
+              <p class="dk-sample__name">{{ product.title }}</p>
+              <p class="dk-sample__fam">{% render 'family-tag', family: product.metafields.custom.family.value %}</p>
+            </div>
+          </a>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Discovery kit",
+  "settings": [
+    { "type": "product", "id": "kit_product", "label": "Discovery Kit product", "info": "The product added to cart. Create a 'Mazah Discovery Kit' product in Shopify." },
+    { "type": "collection", "id": "samples_collection", "label": "Samples shown ('what's inside')" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Try Before You Buy" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>The Mazah <strong>Discovery Kit</strong></p>" },
+    { "type": "number", "id": "kit_price", "label": "Fallback price (no product set)", "default": 19 },
+    { "type": "text", "id": "price_caption", "label": "Price caption", "default": "for 6 × 2ml samples" },
+    { "type": "textarea", "id": "body", "label": "Body", "default": "Fragrance is personal — so try the collection on your own skin before you commit to a full bottle. Six generous 2ml sprays, beautifully boxed, delivered to your door." },
+    { "type": "textarea", "id": "bullets", "label": "Bullet points (one per line)", "default": "Six 2ml atomisers — roughly 50 sprays each\n$19 credited toward your first full-size bottle\nIncludes our bestsellers and newest launches" },
+    { "type": "url", "id": "fallback_url", "label": "Fallback shop link" },
+    { "type": "url", "id": "quiz_url", "label": "Quiz link" }
+  ],
+  "presets": [ { "name": "Discovery kit" } ]
+}
+{% endschema %}

@@ -1,0 +1,8 @@
+{
+  "sections": {
+    "main": { "type": "main-product", "settings": {} },
+    "related": { "type": "related-products", "settings": {} },
+    "reviews": { "type": "product-reviews", "settings": { "source": "metaobjects" } }
+  },
+  "order": ["main", "related", "reviews"]
+}

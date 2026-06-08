@@ -1,0 +1,41 @@
+{%- comment -%}
+  Colored scent-family pill. Maps a family handle to its tag color + label.
+  Usage: {% render 'family-tag', family: product.metafields.custom.family.value, class: 'fam-tag' %}
+{%- endcomment -%}
+{%- liquid
+  assign fam = family | default: '' | downcase
+  assign cls = class | default: 'fam-tag'
+  case fam
+    when 'warm'
+      assign bg = '#F3C76B'
+      assign fg = '#5b430f'
+      assign label = 'Warm'
+    when 'flowery'
+      assign bg = '#F4C7D2'
+      assign fg = '#73324a'
+      assign label = 'Flowery'
+    when 'gourmand'
+      assign bg = '#F2C29A'
+      assign fg = '#7a431c'
+      assign label = 'Gourmand'
+    when 'earthy'
+      assign bg = '#CBD8AC'
+      assign fg = '#42501f'
+      assign label = 'Earthy'
+    when 'fresh'
+      assign bg = '#BBD7E0'
+      assign fg = '#1f4a55'
+      assign label = 'Fresh'
+    when 'woody'
+      assign bg = '#D8C3A6'
+      assign fg = '#5a4525'
+      assign label = 'Woody'
+    else
+      assign bg = '#F4F1EC'
+      assign fg = '#6E6A63'
+      assign label = fam | capitalize
+  endcase
+-%}
+{%- if fam != blank -%}
+  <span class="{{ cls }}" style="background-color: {{ bg }}; color: {{ fg }};">{{ label }}</span>
+{%- endif -%}

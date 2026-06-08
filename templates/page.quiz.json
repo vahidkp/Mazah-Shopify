@@ -1,0 +1,12 @@
+{
+  "sections": {
+    "main": {
+      "type": "scent-quiz",
+      "settings": {
+        "collection": "all",
+        "discovery_url": "shopify://pages/discovery-kit"
+      }
+    }
+  },
+  "order": ["main"]
+}

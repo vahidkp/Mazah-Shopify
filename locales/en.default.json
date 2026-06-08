@@ -1,0 +1,52 @@
+{
+  "general": {
+    "search": {
+      "title": "Search",
+      "placeholder": "Search",
+      "no_results": "No perfumes found",
+      "no_results_hint": "Try adjusting your filters or search."
+    },
+    "404": {
+      "title": "Page not found",
+      "subtext": "The page you were looking for doesn’t exist.",
+      "link": "Back to home"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "unavailable": "Unavailable",
+      "quantity": "Quantity",
+      "size": "Size",
+      "member_price": "member",
+      "guest_price": "Guest",
+      "inspired_by": "Inspired by",
+      "see_reviews": "See reviews",
+      "save_for_later": "Save for Later",
+      "saved": "Saved to Wishlist"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Your Cart",
+      "empty": "Your cart is empty",
+      "empty_hint": "Explore our perfumes to find your signature scent.",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "total": "Total",
+      "checkout": "Checkout",
+      "continue": "Continue Shopping",
+      "free_shipping": "🎉 You’ve unlocked FREE shipping!",
+      "remove": "Remove"
+    }
+  },
+  "layout": {
+    "cart": { "title": "Cart" },
+    "navigation": { "menu": "Menu", "close": "Close" }
+  }
+}

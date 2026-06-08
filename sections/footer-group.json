@@ -1,0 +1,26 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "discover": {
+          "type": "column",
+          "settings": { "title": "Discover.", "menu": "footer" }
+        },
+        "help": {
+          "type": "column",
+          "settings": { "title": "Help.", "menu": "footer" }
+        },
+        "more": {
+          "type": "column",
+          "settings": { "title": "More.", "menu": "footer" }
+        }
+      },
+      "block_order": ["discover", "help", "more"],
+      "settings": {}
+    }
+  },
+  "order": ["footer"]
+}

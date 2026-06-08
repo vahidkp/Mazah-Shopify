@@ -1,0 +1,168 @@
+{%- comment -%}
+  Interactive scent quiz. Scores scent categories client-side and renders the
+  top 3 matching products. Product pool is read from a configured collection;
+  each product's category comes from metafield custom.category (fallback family).
+{%- endcomment -%}
+{%- liquid
+  assign pool = collections[section.settings.collection].products
+  if pool == empty or pool == nil
+    assign pool = collections.all.products
+  endif
+-%}
+
+<section class="quiz" style="max-width:48rem;margin:0 auto;padding:48px 24px">
+  <div id="QuizProgress" style="margin-bottom:32px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <span class="eyebrow" id="QuizStepLabel">Step 1 of 3</span>
+      <button type="button" id="QuizBack" style="display:none;align-items:center;gap:4px;font-size:.75rem;color:var(--muted)">{% render 'icon', name: 'chevron-left', size: 14 %} Back</button>
+    </div>
+    <div style="height:4px;border-radius:999px;background:var(--line);overflow:hidden">
+      <div id="QuizBar" style="height:100%;background:var(--ink);width:0;transition:width .4s"></div>
+    </div>
+  </div>
+
+  <div id="QuizStage"></div>
+</section>
+
+<script type="application/json" id="QuizProducts">
+[
+  {%- for product in pool limit: 60 -%}
+    {
+      "title": {{ product.title | json }},
+      "url": {{ product.url | json }},
+      "image": {{ product.featured_image | image_url: width: 600 | json }},
+      "tint": {{ product.metafields.custom.tint.value | default: '#F4F1EC' | json }},
+      "category": {{ product.metafields.custom.category.value | default: product.metafields.custom.family.value | default: '' | downcase | json }},
+      "brand": {{ product.metafields.custom.inspired_by_brand.value | default: '' | json }},
+      "scent": {{ product.metafields.custom.inspired_by_scent.value | default: '' | json }},
+      "rating": {{ product.metafields.reviews.rating.value.rating | default: product.metafields.custom.rating.value | default: 0 | json }},
+      "price": {{ product.price | money | json }}
+    }{%- unless forloop.last -%},{%- endunless -%}
+  {%- endfor -%}
+]
+</script>
+
+<script>
+(function () {
+  var stage = document.getElementById('QuizStage');
+  if (!stage) return;
+  var products = JSON.parse(document.getElementById('QuizProducts').textContent || '[]');
+  var discoveryUrl = {{ section.settings.discovery_url | default: '/pages/discovery-kit' | json }};
+
+  var QUESTIONS = [
+    { title: 'What mood are you after?', options: [
+      { label: 'Bold & Mysterious', desc: 'Make an entrance', weights: { oriental: 2, woody: 2 } },
+      { label: 'Fresh & Energetic', desc: 'Clean and alive', weights: { fresh: 2, citrus: 2 } },
+      { label: 'Romantic & Soft', desc: 'Pretty and intimate', weights: { floral: 3, flowery: 3 } },
+      { label: 'Warm & Comforting', desc: 'Cozy and golden', weights: { oriental: 2, warm: 2, woody: 1 } }
+    ]},
+    { title: 'When will you wear it most?', options: [
+      { label: 'Every Day', desc: 'Effortless signature', weights: { fresh: 2, citrus: 1 } },
+      { label: 'Date Night', desc: 'Turn heads', weights: { floral: 1, flowery: 1, oriental: 2 } },
+      { label: 'The Office', desc: 'Refined, never loud', weights: { fresh: 2, floral: 1, flowery: 1 } },
+      { label: 'Special Events', desc: 'Unforgettable', weights: { oriental: 2, woody: 2, warm: 1 } }
+    ]},
+    { title: 'Which note speaks to you?', options: [
+      { label: 'Florals & Petals', desc: 'Rose, jasmine, peony', weights: { floral: 3, flowery: 3 } },
+      { label: 'Citrus & Sea', desc: 'Grapefruit, salt, neroli', weights: { citrus: 2, fresh: 2 } },
+      { label: 'Amber & Spice', desc: 'Saffron, amber, vanilla', weights: { oriental: 3, warm: 2 } },
+      { label: 'Wood & Smoke', desc: 'Oud, leather, cedar', weights: { woody: 3 } }
+    ]}
+  ];
+
+  var step = 0, answers = [];
+  var bar = document.getElementById('QuizBar');
+  var label = document.getElementById('QuizStepLabel');
+  var back = document.getElementById('QuizBack');
+  var progress = document.getElementById('QuizProgress');
+
+  back.addEventListener('click', function () { if (step > 0) { step--; answers = answers.slice(0, step); render(); } });
+
+  function score() {
+    var s = {};
+    answers.forEach(function (opt) {
+      Object.keys(opt.weights).forEach(function (cat) { s[cat] = (s[cat] || 0) + opt.weights[cat]; });
+    });
+    return s;
+  }
+
+  function recommend() {
+    var s = score();
+    var ranked = Object.keys(s).filter(function (c) { return s[c] > 0; }).sort(function (a, b) { return s[b] - s[a]; });
+    var picks = [];
+    ranked.forEach(function (cat) {
+      products.filter(function (p) { return p.category === cat; })
+        .sort(function (a, b) { return b.rating - a.rating; })
+        .forEach(function (p) { if (picks.length < 3 && picks.indexOf(p) === -1) picks.push(p); });
+    });
+    products.slice().sort(function (a, b) { return b.rating - a.rating; })
+      .forEach(function (p) { if (picks.length < 3 && picks.indexOf(p) === -1) picks.push(p); });
+    return picks.slice(0, 3);
+  }
+
+  function card(p) {
+    return '<a href="' + p.url + '" class="pc pc--featured" style="display:block">' +
+      '<div class="pc__media" style="background-color:' + p.tint + '">' +
+      (p.image ? '<img src="' + p.image + '" alt="" class="blend-multiply" loading="lazy">' : '') +
+      '</div><div class="pc__info"><span class="product-name pc__name"><strong>' + p.title + '</strong></span>' +
+      (p.brand ? '<p class="pc__inspired">Inspired by <strong>' + p.brand + (p.scent ? '’s ' + p.scent : '') + '</strong></p>' : '') +
+      '<p class="pc__price"><span class="guest-val">' + p.price + '</span></p></div></a>';
+  }
+
+  function render() {
+    if (step < QUESTIONS.length) {
+      progress.style.display = '';
+      label.textContent = 'Step ' + (step + 1) + ' of ' + QUESTIONS.length;
+      back.style.display = step > 0 ? 'inline-flex' : 'none';
+      bar.style.width = (step / QUESTIONS.length * 100) + '%';
+      var q = QUESTIONS[step];
+      var html = '<h2 style="font-family:var(--font-display);font-size:1.875rem;font-weight:700;letter-spacing:-.04em;margin-bottom:32px;text-align:center">' + q.title + '</h2>' +
+        '<div class="quiz-options" style="display:grid;gap:16px">';
+      q.options.forEach(function (opt, i) {
+        html += '<button type="button" class="quiz-opt" data-i="' + i + '" style="text-align:left;padding:24px;border-radius:var(--radius-card);border:1px solid var(--line);background:var(--paper);transition:all .2s">' +
+          '<p style="font-family:var(--font-display);font-size:1.125rem;font-weight:700">' + opt.label + '</p>' +
+          '<p style="font-size:.875rem;color:var(--muted);margin-top:4px">' + opt.desc + '</p></button>';
+      });
+      html += '</div>';
+      stage.innerHTML = html;
+      stage.querySelectorAll('.quiz-opt').forEach(function (btn) {
+        btn.addEventListener('mouseenter', function () { btn.style.borderColor = 'var(--ink)'; btn.style.boxShadow = 'var(--shadow-hover)'; });
+        btn.addEventListener('mouseleave', function () { btn.style.borderColor = 'var(--line)'; btn.style.boxShadow = 'none'; });
+        btn.addEventListener('click', function () {
+          answers[step] = q.options[parseInt(btn.getAttribute('data-i'), 10)];
+          step++; render();
+        });
+      });
+    } else {
+      progress.style.display = 'none';
+      var results = recommend();
+      stage.innerHTML =
+        '<div style="text-align:center">' +
+        '<p class="eyebrow" style="color:var(--coral);margin-bottom:12px">Your Matches</p>' +
+        '<h2 style="font-family:var(--font-display);font-size:1.875rem;font-weight:700;letter-spacing:-.04em;margin-bottom:8px">We found your scent</h2>' +
+        '<p style="font-size:.875rem;color:var(--muted);margin:0 auto 40px;max-width:28rem">Based on your answers, these three Mazah fragrances are your closest match. Not sure? Try the Discovery Kit and sample them all.</p>' +
+        '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;text-align:left" class="quiz-results">' +
+        results.map(card).join('') + '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:12px;justify-content:center;margin-top:40px" class="quiz-cta">' +
+        '<a href="' + discoveryUrl + '" class="btn btn--solid btn--lg">Sample All 3</a>' +
+        '<button type="button" id="QuizRestart" class="btn btn--outline btn--lg">Retake Quiz</button>' +
+        '</div></div>';
+      var r = document.getElementById('QuizRestart');
+      if (r) r.addEventListener('click', function () { step = 0; answers = []; render(); });
+    }
+  }
+
+  render();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Scent quiz",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Product pool", "info": "Products the quiz draws recommendations from." },
+    { "type": "url", "id": "discovery_url", "label": "Discovery Kit link" }
+  ],
+  "presets": [ { "name": "Scent quiz" } ]
+}
+{% endschema %}

@@ -1,0 +1,30 @@
+{
+  "sections": {
+    "hero": {
+      "type": "rich-hero",
+      "settings": {
+        "eyebrow": "About Mazah",
+        "heading": "The perfume house for the next generation.",
+        "subtext": "Premium-quality French fragrances. No excessive markups. Crafted with heart, not ego."
+      }
+    },
+    "intro": { "type": "image-text", "settings": {} },
+    "values": {
+      "type": "value-cards",
+      "blocks": {
+        "v1": { "type": "value", "settings": { "title": "Crafted in France", "body": "Every fragrance is composed and bottled in France by master perfumers, using the same fine raw materials as the houses that inspire us." } },
+        "v2": { "type": "value", "settings": { "title": "No Excessive Markups", "body": "You pay for the perfume — not the marketing, the celebrity, or the gilded boutique. Designer-quality scent at an honest price." } },
+        "v3": { "type": "value", "settings": { "title": "Clean & Cruelty-Free", "body": "Vegan, cruelty-free, and made with clean ingredients. Beautiful fragrance you can feel good about wearing every day." } }
+      },
+      "block_order": ["v1", "v2", "v3"]
+    },
+    "cta": {
+      "type": "cta-banner",
+      "settings": {
+        "cta1_url": "shopify://pages/quiz",
+        "cta2_url": "shopify://collections/all"
+      }
+    }
+  },
+  "order": ["hero", "intro", "values", "cta"]
+}

@@ -1,0 +1,21 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "settings": {}
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu_perfumes": "main-menu",
+        "menu_about": "footer",
+        "home_scents_url": "shopify://pages/discovery-kit",
+        "quiz_url": "shopify://pages/quiz",
+        "shop_all_url": "shopify://collections/all"
+      }
+    }
+  },
+  "order": ["announcement-bar", "header"]
+}

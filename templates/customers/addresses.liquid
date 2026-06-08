@@ -1,0 +1,11 @@
+<div class="page-shell">
+  <h1>Your Addresses</h1>
+  <p style="margin:12px 0"><a href="{{ routes.account_url }}" class="muted" style="text-decoration:underline;font-size:.875rem">← Back to account</a></p>
+  {%- paginate customer.addresses by 10 -%}
+    {%- for address in customer.addresses -%}
+      <div style="border:1px solid var(--line);border-radius:var(--radius-card);padding:16px;margin-bottom:12px">
+        {{ address | format_address }}
+      </div>
+    {%- endfor -%}
+  {%- endpaginate -%}
+</div>

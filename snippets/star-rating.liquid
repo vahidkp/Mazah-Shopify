@@ -1,0 +1,26 @@
+{%- comment -%}
+  Star rating row. Reads numeric rating + optional count.
+  Usage: {% render 'star-rating', rating: 4.8, count: 142, size: 13, show_count: true %}
+{%- endcomment -%}
+{%- liquid
+  assign r = rating | default: 0 | times: 1.0
+  assign s = size | default: 14
+  assign rounded = r | round
+  if show_count == nil
+    assign show_count = true
+  endif
+-%}
+<div class="stars" aria-label="Rated {{ r }} out of 5">
+  <div class="stars__row">
+    {%- for i in (1..5) -%}
+      {%- if i <= rounded -%}
+        <svg width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="#141414" stroke="#141414" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      {%- else -%}
+        <svg width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="#141414" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+  {%- if show_count and count -%}
+    <span class="stars__count">{{ count }}</span>
+  {%- endif -%}
+</div>

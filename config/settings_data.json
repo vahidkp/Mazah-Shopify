@@ -1,0 +1,25 @@
+{
+  "current": {
+    "brand_name": "mazah",
+    "logo_width": 120,
+    "color_ink": "#141414",
+    "color_paper": "#FFFFFF",
+    "color_canvas": "#FBFAF8",
+    "color_card": "#F4F1EC",
+    "color_line": "#E9E5DF",
+    "color_muted": "#6E6A63",
+    "color_faint": "#9C978E",
+    "color_coral": "#D6492E",
+    "color_gold": "#C8962A",
+    "font_display": "assistant_n4",
+    "font_body": "assistant_n4",
+    "member_discount": 10,
+    "free_ship_threshold": 100,
+    "social_instagram": "https://instagram.com",
+    "social_tiktok": "https://tiktok.com",
+    "social_facebook": "https://facebook.com"
+  },
+  "presets": {
+    "Mazah": {}
+  }
+}

@@ -1,0 +1,41 @@
+{%- comment -%} Gender / category image cards (Women / Men / Unisex) {%- endcomment -%}
+<section class="container-wide cat-cards reveal">
+  {%- for block in section.blocks -%}
+    <a href="{{ block.settings.url }}" class="cat-card" {{ block.shopify_attributes }}>
+      {%- if block.settings.image -%}
+        {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', alt: block.settings.label, sizes: '(max-width:640px) 100vw, 33vw', widths: '400,600,800' }}
+      {%- endif -%}
+      <div class="cat-card__scrim"></div>
+      <span class="cat-card__label">{{ block.settings.label }}</span>
+      <span class="cat-card__arrow">{% render 'icon', name: 'arrow-right', size: 18 %}</span>
+    </a>
+  {%- endfor -%}
+</section>
+
+{% schema %}
+{
+  "name": "Category cards",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Women" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "url", "id": "url", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category cards",
+      "blocks": [
+        { "type": "card", "settings": { "label": "Women" } },
+        { "type": "card", "settings": { "label": "Men" } },
+        { "type": "card", "settings": { "label": "Unisex" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

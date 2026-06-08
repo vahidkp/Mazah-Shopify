@@ -1,0 +1,36 @@
+{%- comment -%} Large brand statement banner with gradient + bottle {%- endcomment -%}
+<section class="nextgen reveal" style="background: {{ section.settings.gradient | default: 'linear-gradient(120deg,#7E9DB8,#94B0C5,#B4C8D6)' }};">
+  <div class="nextgen__inner">
+    <div class="nextgen__copy">
+      <h2 class="nextgen__title">{{ section.settings.heading }}{%- if section.settings.show_reg -%}<sup>&reg;</sup>{%- endif -%}</h2>
+      <p class="nextgen__sub">{{ section.settings.subtext }}</p>
+      {%- if section.settings.link_label != blank -%}
+        <a href="{{ section.settings.link_url }}" class="nextgen__link">{{ section.settings.link_label }}</a>
+      {%- endif -%}
+      <div class="nextgen__dots">
+        <span class="is-active"></span><span></span><span></span>
+      </div>
+    </div>
+    <div class="nextgen__media">
+      {%- if section.settings.image -%}
+        {{ section.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', class: 'blend-multiply', alt: 'Mazah fragrance', sizes: '(max-width:768px) 80vw, 40vw' }}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Next-gen banner",
+  "settings": [
+    { "type": "html", "id": "heading", "label": "Heading", "default": "THE PERFUME HOUSE<br>FOR THE NEXT<br>GENERATION" },
+    { "type": "checkbox", "id": "show_reg", "label": "Show ® mark", "default": true },
+    { "type": "text", "id": "subtext", "label": "Subtext", "default": "Premium-quality French fragrances. No excessive markups. Crafted with heart, not ego." },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "About Us" },
+    { "type": "url", "id": "link_url", "label": "Link" },
+    { "type": "image_picker", "id": "image", "label": "Bottle image" },
+    { "type": "text", "id": "gradient", "label": "CSS gradient", "default": "linear-gradient(120deg, #7E9DB8 0%, #94B0C5 45%, #B4C8D6 100%)" }
+  ],
+  "presets": [ { "name": "Next-gen banner" } ]
+}
+{% endschema %}

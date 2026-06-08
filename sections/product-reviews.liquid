@@ -1,0 +1,103 @@
+{%- comment -%}
+  Reviews — Trustpilot-style banner + summary + list.
+  Two data sources, chosen in the section settings:
+   1) "app"  — drop in a Judge.me / Loox / Yotpo widget (paste its Liquid below)
+   2) "metaobjects" — read product.metafields.custom.reviews (list of review
+      metaobjects with fields: author, rating, date, title, body, reply, verified)
+{%- endcomment -%}
+{%- liquid
+  assign mf = product.metafields.custom
+  assign rating = product.metafields.reviews.rating.value.rating | default: mf.rating.value | default: 0
+  assign count = product.metafields.reviews.rating_count.value | default: mf.review_count.value | default: 0
+  assign review_list = mf.reviews.value
+-%}
+
+<section id="reviews" class="reviews">
+  <div class="reviews__inner">
+    {%- comment -%} Trustpilot-style banner {%- endcomment -%}
+    <div class="reviews__trust">
+      <div class="tp">{% render 'icon', name: 'star', size: 18 %} <span>Trustpilot</span></div>
+      <span class="muted" style="font-size:.875rem">{{ shop.name }} is rated <strong style="color:var(--ink)">Excellent</strong></span>
+      <div class="pills">
+        {%- for i in (1..5) -%}<span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" stroke="#fff"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>{%- endfor -%}
+        <span style="font-size:.875rem;font-weight:500;margin-left:4px">{{ rating }}</span>
+      </div>
+      <span class="muted" style="font-size:.75rem">Based on {{ count }} reviews</span>
+    </div>
+
+    {%- if section.settings.source == 'app' and section.settings.app_embed != blank -%}
+      {{ section.settings.app_embed }}
+    {%- else -%}
+      <div class="reviews__grid">
+        <div class="reviews__summary">
+          <h2>Customer Reviews</h2>
+          <div class="reviews__big">
+            <span class="num">{{ rating }}</span>
+            <div style="padding-bottom:4px">
+              {% render 'star-rating', rating: rating, show_count: false, size: 16 %}
+              <p class="muted" style="font-size:.75rem;margin-top:4px">Based on {{ count }} reviews</p>
+            </div>
+          </div>
+          <div class="reviews__tabs">
+            <span class="on">Reviews ({{ count }})</span>
+          </div>
+          {%- if shop.customer_accounts_enabled -%}
+            <a href="#" class="btn btn--outline" style="width:100%;margin-top:20px">Write a Review</a>
+          {%- endif -%}
+        </div>
+
+        <div>
+          {%- if review_list and review_list.count > 0 -%}
+            <div>
+              {%- for r in review_list -%}
+                {%- assign author = r.author.value | default: 'Anonymous' -%}
+                <div class="review">
+                  <div class="review__row">
+                    <span class="review__avatar">{{ author | slice: 0, 1 | upcase }}</span>
+                    <div class="review__body">
+                      <div class="review__head">
+                        <div style="display:flex;align-items:center;gap:8px">
+                          <p class="review__author">{{ author }}</p>
+                          {%- if r.verified.value -%}<span class="review__verified">{% render 'icon', name: 'badge-check', size: 12 %} Verified</span>{%- endif -%}
+                        </div>
+                        {%- if r.date.value -%}<p class="review__date">{{ r.date.value | date: '%m/%d/%Y' }}</p>{%- endif -%}
+                      </div>
+                      <div style="margin-top:4px">{% render 'star-rating', rating: r.rating.value, show_count: false, size: 13 %}</div>
+                      {%- if r.title.value -%}<p class="review__title">{{ r.title.value }}</p>{%- endif -%}
+                      <p class="review__text">{{ r.body.value }}</p>
+                      {%- if r.reply.value -%}
+                        <div class="review__reply">
+                          <p class="who">{% render 'icon', name: 'message', size: 12 %} {{ shop.name }}</p>
+                          <p class="txt">{{ r.reply.value }}</p>
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- else -%}
+            <p class="muted" style="font-size:.875rem">Be the first to review this fragrance.</p>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product reviews",
+  "settings": [
+    {
+      "type": "select", "id": "source", "label": "Reviews source", "default": "metaobjects",
+      "options": [
+        { "value": "metaobjects", "label": "Review metaobjects" },
+        { "value": "app", "label": "Reviews app embed (Judge.me etc.)" }
+      ]
+    },
+    { "type": "liquid", "id": "app_embed", "label": "App embed code", "info": "Paste your Judge.me / Loox / Yotpo product widget Liquid here." }
+  ],
+  "presets": [ { "name": "Product reviews" } ]
+}
+{% endschema %}

@@ -1,0 +1,64 @@
+{%- comment -%}
+  Scent notes card. Metafields (namespace custom):
+    note_descriptor (text), main_notes (multiline "Name|emoji" per line),
+    top_desc / middle_desc / base_desc (text), ingredients (multiline),
+    vegan / cruelty_free / clean (boolean)
+{%- endcomment -%}
+{%- liquid
+  assign mf = product.metafields.custom
+  assign descriptor = mf.note_descriptor.value
+  assign notes_raw = mf.main_notes.value
+  assign top_desc = mf.top_desc.value
+  assign mid_desc = mf.middle_desc.value
+  assign base_desc = mf.base_desc.value
+  assign ingredients = mf.ingredients.value
+-%}
+
+<div class="scent">
+  <p class="eyebrow" style="margin-bottom:12px">Scent Notes</p>
+  {%- if descriptor -%}
+    <p class="scent__descriptor">This perfume is <span>{{ descriptor }}</span></p>
+  {%- endif -%}
+
+  {%- if notes_raw != blank -%}
+    <div class="scent__notes">
+      {%- assign lines = notes_raw | newline_to_br | split: '<br />' -%}
+      {%- for line in lines limit: 4 -%}
+        {%- assign parts = line | strip | split: '|' -%}
+        <div class="scent__note">
+          <span class="glyph" aria-hidden="true">{{ parts[1] | strip | default: '•' }}</span>
+          <span class="label">{{ parts[0] | strip }}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- if top_desc or mid_desc or base_desc -%}
+    <div class="scent__pyramid">
+      {%- if top_desc -%}
+        <div class="scent__tier">{% render 'icon', name: 'leaf', size: 16 %}<p><span class="lbl">Top: </span><span class="txt">{{ top_desc }}</span></p></div>
+      {%- endif -%}
+      {%- if mid_desc -%}
+        <div class="scent__tier">{% render 'icon', name: 'heart', size: 16 %}<p><span class="lbl">Middle: </span><span class="txt">{{ mid_desc }}</span></p></div>
+      {%- endif -%}
+      {%- if base_desc -%}
+        <div class="scent__tier">{% render 'icon', name: 'anchor', size: 16 %}<p><span class="lbl">Base: </span><span class="txt">{{ base_desc }}</span></p></div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- if ingredients != blank -%}
+    <details class="scent__ing">
+      <summary><span class="show">+ Full ingredient list</span><span class="hide">&ndash; Hide ingredients</span></summary>
+      <p>{{ ingredients }}</p>
+    </details>
+  {%- endif -%}
+
+  {%- if mf.vegan.value or mf.cruelty_free.value or mf.clean.value -%}
+    <div class="scent__attrs">
+      {%- if mf.vegan.value -%}<span class="item">{% render 'icon', name: 'check', size: 13 %} Vegan</span>{%- endif -%}
+      {%- if mf.cruelty_free.value -%}<span class="item">{% render 'icon', name: 'check', size: 13 %} Cruelty-free</span>{%- endif -%}
+      {%- if mf.clean.value -%}<span class="item">{% render 'icon', name: 'check', size: 13 %} Clean ingredients</span>{%- endif -%}
+    </div>
+  {%- endif -%}
+</div>

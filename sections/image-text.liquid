@@ -1,0 +1,24 @@
+{%- comment -%} Two-column image + text {%- endcomment -%}
+<section class="about-intro reveal">
+  <div class="about-intro__media">
+    {%- if section.settings.image -%}
+      {{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: section.settings.heading | strip_html, sizes: '(max-width:768px) 100vw, 50vw' }}
+    {%- endif -%}
+  </div>
+  <div>
+    <h2>{{ section.settings.heading }}</h2>
+    <div class="rte" style="color:var(--muted)">{{ section.settings.body }}</div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>A house built on <strong>honesty</strong></p>" },
+    { "type": "richtext", "id": "body", "label": "Body", "default": "<p>Mazah began with a simple frustration: the world&rsquo;s most beautiful fragrances came with the world&rsquo;s most absurd markups. So we built a house around access and integrity.</p>" }
+  ],
+  "presets": [ { "name": "Image with text" } ]
+}
+{% endschema %}

@@ -1,0 +1,93 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "heading": "<p>Smell into <strong>The Future of Fragrance.</strong></p>",
+        "cta1_label": "Shop Bestsellers",
+        "cta1_url": "shopify://collections/bestsellers",
+        "cta2_label": "Shop All",
+        "cta2_url": "shopify://collections/all"
+      }
+    },
+    "latest_drops": {
+      "type": "featured-carousel",
+      "settings": {
+        "title": "Our latest drops",
+        "collection": "latest-drops",
+        "card_variant": "drop",
+        "product_limit": 8
+      }
+    },
+    "dual_cards": {
+      "type": "dual-collection-cards",
+      "blocks": {
+        "impressions": {
+          "type": "card",
+          "settings": {
+            "title": "Mazah Impressions",
+            "subtitle": "Designer-inspired, premium-quality favorites.",
+            "url": "shopify://collections/impressions",
+            "gradient": "linear-gradient(120deg, #DDEBD6 0%, #C7DCC2 50%, #F3D9C0 100%)"
+          }
+        },
+        "originals": {
+          "type": "card",
+          "settings": {
+            "title": "Mazah Originals",
+            "subtitle": "Exclusive fragrances crafted in France.",
+            "url": "shopify://collections/originals",
+            "gradient": "linear-gradient(120deg, #F7E0D2 0%, #F4C9D6 55%, #EAB7CE 100%)"
+          }
+        }
+      },
+      "block_order": ["impressions", "originals"]
+    },
+    "category_cards": {
+      "type": "category-cards",
+      "blocks": {
+        "women": { "type": "card", "settings": { "label": "Women", "url": "shopify://collections/women" } },
+        "men": { "type": "card", "settings": { "label": "Men", "url": "shopify://collections/men" } },
+        "unisex": { "type": "card", "settings": { "label": "Unisex", "url": "shopify://collections/unisex" } }
+      },
+      "block_order": ["women", "men", "unisex"]
+    },
+    "featured_france": {
+      "type": "featured-carousel",
+      "settings": {
+        "title": "Featured perfumes crafted in France",
+        "collection": "originals",
+        "view_all_url": "shopify://collections/originals",
+        "card_variant": "featured",
+        "product_limit": 6
+      }
+    },
+    "boutique": {
+      "type": "boutique-banner",
+      "settings": {
+        "heading": "<p>Visit our boutiques for the perfect <strong>Father&rsquo;s Day pairing.</strong></p>",
+        "subtext": "Free gift with your purchase. IRL only. Ends June 21st!",
+        "cta_label": "Find a Boutique",
+        "cta_url": "shopify://pages/about"
+      }
+    },
+    "nextgen": {
+      "type": "nextgen-banner",
+      "settings": {
+        "heading": "THE PERFUME HOUSE<br>FOR THE NEXT<br>GENERATION",
+        "subtext": "Premium-quality French fragrances. No excessive markups. Crafted with heart, not ego.",
+        "link_label": "About Us",
+        "link_url": "shopify://pages/about"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "latest_drops",
+    "dual_cards",
+    "category_cards",
+    "featured_france",
+    "boutique",
+    "nextgen"
+  ]
+}

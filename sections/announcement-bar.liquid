@@ -1,0 +1,33 @@
+{%- comment -%} Top announcement bar with left + center messages {%- endcomment -%}
+<div class="announcement" role="region" aria-label="Announcement">
+  <div class="container-wide">
+    <div class="announcement__inner">
+      {%- if section.settings.left_text != blank -%}
+        <span class="announcement__left">
+          {{ section.settings.left_text }}
+          {%- if section.settings.left_link_label != blank -%}
+            <a href="{{ section.settings.left_link }}">{{ section.settings.left_link_label }}</a>
+          {%- endif -%}
+        </span>
+      {%- endif -%}
+      <div class="announcement__center">
+        <span>{{ section.settings.center_text }}</span>
+        {%- if section.settings.show_info_icon -%}{% render 'icon', name: 'info', size: 12 %}{%- endif -%}
+      </div>
+      <span class="announcement__spacer"></span>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    { "type": "text", "id": "left_text", "label": "Left message", "default": "Free 3ml samples with Mazah+" },
+    { "type": "text", "id": "left_link_label", "label": "Left link label", "default": "Learn more" },
+    { "type": "url", "id": "left_link", "label": "Left link" },
+    { "type": "text", "id": "center_text", "label": "Center message", "default": "Mazah+ Member: Up to 30% OFF + FREE shipping + FREE perfume" },
+    { "type": "checkbox", "id": "show_info_icon", "label": "Show info icon", "default": true }
+  ]
+}
+{% endschema %}

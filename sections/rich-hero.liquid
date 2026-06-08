@@ -1,0 +1,21 @@
+{%- comment -%} Gradient page hero with eyebrow + heading + subtext {%- endcomment -%}
+<section class="page-hero" style="background: {{ section.settings.gradient | default: 'linear-gradient(120deg,#5C7A93,#7C99AE,#9DB4C4)' }};">
+  <div class="page-hero__inner">
+    {%- if section.settings.eyebrow != blank -%}<p class="eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+    <h1>{{ section.settings.heading }}</h1>
+    {%- if section.settings.subtext != blank -%}<p>{{ section.settings.subtext }}</p>{%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Rich hero",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "About Mazah" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The perfume house for the next generation." },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Premium-quality French fragrances. No excessive markups. Crafted with heart, not ego." },
+    { "type": "text", "id": "gradient", "label": "CSS gradient", "default": "linear-gradient(120deg, #5C7A93 0%, #7C99AE 50%, #9DB4C4 100%)" }
+  ],
+  "presets": [ { "name": "Rich hero" } ]
+}
+{% endschema %}

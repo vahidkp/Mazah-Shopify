@@ -1,0 +1,69 @@
+{%- comment -%} Full cart page (the drawer handles most flows; this is the /cart route) {%- endcomment -%}
+{%- assign threshold = settings.free_ship_threshold | default: 100 | times: 100 -%}
+{%- assign free = false -%}
+{%- if cart.total_price >= threshold -%}{%- assign free = true -%}{%- endif -%}
+
+<div class="cart-page">
+  <h1>Your Cart</h1>
+
+  {%- if cart.item_count == 0 -%}
+    <div class="cart-empty" style="height:auto;padding:64px 0">
+      {% render 'icon', name: 'cart', size: 44 %}
+      <p class="t">Your cart is empty</p>
+      <p class="s">Explore our perfumes to find your signature scent.</p>
+      <a href="{{ routes.all_products_collection_url }}" class="btn-solid">Shop All</a>
+    </div>
+  {%- else -%}
+    <form action="{{ routes.cart_url }}" method="post" id="cart" class="cart-page__grid">
+      <div class="cart-page__items">
+        {%- for item in cart.items -%}
+          <div class="cart-line">
+            <div class="cart-line__media">
+              {%- if item.image -%}{{ item.image | image_url: width: 160 | image_tag: loading: 'lazy', alt: item.product.title }}{%- endif -%}
+            </div>
+            <div class="cart-line__body">
+              <p class="cart-line__name"><a href="{{ item.url }}">{{ item.product.title }}</a></p>
+              <p class="cart-line__variant">{{ item.variant.title }}</p>
+              <div class="cart-line__row">
+                <div class="cart-line__qty">
+                  <button type="button" class="js-qty" data-line="{{ forloop.index }}" data-qty="{{ item.quantity | minus: 1 }}" aria-label="Decrease">{% render 'icon', name: 'minus', size: 12 %}</button>
+                  <span>{{ item.quantity }}</span>
+                  <button type="button" class="js-qty" data-line="{{ forloop.index }}" data-qty="{{ item.quantity | plus: 1 }}" aria-label="Increase">{% render 'icon', name: 'plus', size: 12 %}</button>
+                </div>
+                <p class="cart-line__price">{{ item.final_line_price | money }}</p>
+              </div>
+            </div>
+            <button type="button" class="cart-line__remove js-qty" data-line="{{ forloop.index }}" data-qty="0" aria-label="Remove">{% render 'icon', name: 'trash', size: 15 %}</button>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="cart-page__summary">
+        <div class="cart-drawer__ship" style="border-radius:8px">
+          {%- if free -%}<span class="ok">🎉 You&rsquo;ve unlocked FREE shipping!</span>
+          {%- else -%}You&rsquo;re <span class="ink">{{ threshold | minus: cart.total_price | money }}</span> away from <span class="ink">FREE shipping</span>.{%- endif -%}
+        </div>
+        <div class="cart-totals">
+          <div class="r"><span>Subtotal</span><span>{{ cart.total_price | money }}</span></div>
+          <div class="r"><span>Shipping</span><span>{% if free %}<span class="ok">Free</span>{% else %}Calculated at checkout{% endif %}</span></div>
+          <div class="total"><span>Total</span><span>{{ cart.total_price | money }}</span></div>
+        </div>
+        {%- if cart.cart_level_discount_applications.size > 0 -%}
+          {%- for d in cart.cart_level_discount_applications -%}
+            <p class="muted" style="font-size:.75rem">{{ d.title }} (&minus;{{ d.total_allocated_amount | money }})</p>
+          {%- endfor -%}
+        {%- endif -%}
+        <button type="submit" name="checkout" class="btn btn--solid btn--lg" style="width:100%">Checkout</button>
+        <a href="{{ routes.all_products_collection_url }}" class="cart-continue">Continue Shopping</a>
+      </div>
+    </form>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Cart",
+  "settings": [],
+  "presets": [ { "name": "Cart" } ]
+}
+{% endschema %}

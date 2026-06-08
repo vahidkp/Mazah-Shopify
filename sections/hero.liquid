@@ -1,0 +1,41 @@
+{%- comment -%} Full-bleed homepage hero {%- endcomment -%}
+<section class="hero">
+  <div class="hero__bg">
+    {%- if section.settings.image -%}
+      {{ section.settings.image | image_url: width: 2400 | image_tag: loading: 'eager', fetchpriority: 'high', alt: section.settings.heading | strip_html, sizes: '100vw', widths: '750,1100,1500,2000,2400' }}
+    {%- else -%}
+      {{ 'hero-honey.jpg' | asset_url | image_url: width: 2400 | image_tag: loading: 'eager', alt: 'Mazah perfume', sizes: '100vw' }}
+    {%- endif -%}
+    <div class="hero__scrim" style="background: linear-gradient(to top right, {{ section.settings.scrim_color | default: '#f2e3c2' }}E6, {{ section.settings.scrim_color | default: '#f2e3c2' }}26 50%, transparent);"></div>
+
+    <div class="hero__content container-wide">
+      <div class="hero__copy">
+        <h1 class="hero__title">{{ section.settings.heading }}</h1>
+        <div class="hero__cta">
+          {%- if section.settings.cta1_label != blank -%}
+            <a href="{{ section.settings.cta1_url }}" class="btn btn--solid btn--lg">{{ section.settings.cta1_label }}</a>
+          {%- endif -%}
+          {%- if section.settings.cta2_label != blank -%}
+            <a href="{{ section.settings.cta2_url }}" class="btn btn--outline btn--lg">{{ section.settings.cta2_label }}</a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Background image" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Smell into <strong>The Future of Fragrance.</strong></p>" },
+    { "type": "color", "id": "scrim_color", "label": "Scrim color", "default": "#f2e3c2" },
+    { "type": "text", "id": "cta1_label", "label": "Button 1 label", "default": "Shop Bestsellers" },
+    { "type": "url", "id": "cta1_url", "label": "Button 1 link" },
+    { "type": "text", "id": "cta2_label", "label": "Button 2 label", "default": "Shop All" },
+    { "type": "url", "id": "cta2_url", "label": "Button 2 link" }
+  ],
+  "presets": [ { "name": "Hero" } ]
+}
+{% endschema %}

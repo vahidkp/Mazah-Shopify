@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}" class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta name="theme-color" content="{{ settings.color_ink }}">
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {% comment %} Design tokens from theme settings {% endcomment %}
+    {%- assign font_display = settings.font_display -%}
+    {%- assign font_body = settings.font_body -%}
+    <style>
+      {{ font_display | font_face: font_display: 'swap' }}
+      {{ font_body | font_face: font_display: 'swap' }}
+      :root {
+        --ink: {{ settings.color_ink }};
+        --paper: {{ settings.color_paper }};
+        --canvas: {{ settings.color_canvas }};
+        --card: {{ settings.color_card }};
+        --line: {{ settings.color_line }};
+        --muted: {{ settings.color_muted }};
+        --faint: {{ settings.color_faint }};
+        --coral: {{ settings.color_coral }};
+        --gold: {{ settings.color_gold }};
+        --font-display-stack: {{ font_display.family }}, {{ font_display.fallback_families }};
+        --font-body-stack: {{ font_body.family }}, {{ font_body.fallback_families }};
+      }
+    </style>
+
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+
+    <script>
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+      window.mazahFreeShip = {{ settings.free_ship_threshold | default: 100 }};
+      window.mazahMemberDiscount = {{ settings.member_discount | default: 10 }};
+      window.themeMoneyFormat = {{ shop.money_format | json }};
+    </script>
+    <script src="{{ 'theme.js' | asset_url }}" defer></script>
+
+    {{ content_for_header }}
+  </head>
+
+  <body class="template-{{ request.page_type | handle }}">
+    <a class="visually-hidden" href="#MainContent">Skip to content</a>
+
+    {% sections 'header-group' %}
+
+    <main id="MainContent" role="main">
+      {{ content_for_layout }}
+    </main>
+
+    {% sections 'footer-group' %}
+
+    {% render 'cart-drawer' %}
+    {% section 'promo-tab' %}
+
+    <div class="drawer-overlay" data-menu-close style="display:none"></div>
+  </body>
+</html>

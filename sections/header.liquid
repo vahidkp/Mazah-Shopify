@@ -1,0 +1,146 @@
+{%- comment -%}
+  Header — floating-pill desktop nav + solid mobile bar with centered logo.
+  Mega menu + about menu are driven by linklists (Navigation menus).
+{%- endcomment -%}
+{%- liquid
+  assign perfumes_menu = linklists[section.settings.menu_perfumes]
+  assign about_menu = linklists[section.settings.menu_about]
+  assign brand = settings.brand_name | default: 'mazah'
+-%}
+
+<header class="site-header">
+  {%- comment -%} ============ DESKTOP ============ {%- endcomment -%}
+  <nav class="nav-desktop" aria-label="Primary">
+    <a href="{{ routes.root_url }}" class="pill nav-logo">
+      {%- if settings.logo -%}
+        {{ settings.logo | image_url: width: 240 | image_tag: alt: shop.name, style: 'height:24px;width:auto' }}
+      {%- else -%}{{ brand }}{%- endif -%}
+    </a>
+
+    <div class="nav-group">
+      <div class="pill nav-pillbar">
+        <div class="nav-dropdown" data-dropdown>
+          <button class="nav-link" aria-haspopup="menu">
+            {{ section.settings.perfumes_label | default: 'Perfumes' }} {% render 'icon', name: 'chevron-down', size: 13 %}
+          </button>
+          {%- if perfumes_menu.links.size > 0 -%}
+            <div class="nav-dropdown__panel">
+              <div class="nav-dropdown__inner">
+                <div class="nav-mega">
+                  {%- for col in perfumes_menu.links -%}
+                    <div class="nav-mega__col">
+                      <p class="eyebrow">{{ col.title }}</p>
+                      <ul>
+                        {%- for link in col.links -%}
+                          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                        {%- endfor -%}
+                      </ul>
+                    </div>
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.home_scents_url != blank -%}
+          <a href="{{ section.settings.home_scents_url }}" class="nav-link">{{ section.settings.home_scents_label | default: 'Home Scents' }} {% render 'icon', name: 'chevron-down', size: 13 %}</a>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.quiz_url != blank -%}
+        <a href="{{ section.settings.quiz_url }}" class="pill nav-quiz">
+          <span class="nav-quiz__icon">{% render 'icon', name: 'sparkles', size: 12 %}</span>
+          <span class="nav-link" style="height:auto;padding:0">{{ section.settings.quiz_label | default: 'AI Scent Finder' }}</span>
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="nav-right">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="pill nav-search">
+        <input type="search" name="q" placeholder="Search" aria-label="Search" value="{{ search.terms | escape }}">
+        <button type="submit" class="nav-search__btn" aria-label="Search">{% render 'icon', name: 'search', size: 15 %}</button>
+      </form>
+
+      {%- if about_menu.links.size > 0 -%}
+        <div class="nav-dropdown" data-dropdown style="position:relative">
+          <button class="pill nav-link" aria-haspopup="menu">{{ section.settings.about_label | default: 'About' }} {% render 'icon', name: 'chevron-down', size: 13 %}</button>
+          <div class="nav-dropdown__panel nav-dropdown__panel--right">
+            <div class="nav-dropdown__inner">
+              <ul class="nav-about-list">
+                {%- for link in about_menu.links -%}
+                  <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+
+      <a href="{{ routes.account_url | default: '/account' }}" class="pill nav-icon-btn" aria-label="Account">{% render 'icon', name: 'user', size: 19 %}</a>
+
+      <button type="button" class="pill nav-icon-btn" data-cart-toggle aria-label="Cart">
+        {% render 'icon', name: 'cart', size: 20 %}
+        <span class="cart-count js-cart-count" {% if cart.item_count == 0 %}style="display:none"{% endif %}>{{ cart.item_count }}</span>
+      </button>
+    </div>
+  </nav>
+
+  {%- comment -%} ============ MOBILE ============ {%- endcomment -%}
+  <div class="nav-mobile">
+    <div class="nav-mobile__bar">
+      <button type="button" class="nav-burger" data-menu-open aria-label="Open menu">{% render 'icon', name: 'menu', size: 20 %}</button>
+      <form action="{{ routes.search_url }}" method="get" role="search" class="nav-mobile__search">
+        <input type="search" name="q" placeholder="Search" aria-label="Search">
+        <button type="submit" class="nav-search__btn" aria-label="Search">{% render 'icon', name: 'search', size: 15 %}</button>
+      </form>
+      <a href="{{ routes.account_url | default: '/account' }}" class="nav-round" aria-label="Account">{% render 'icon', name: 'user', size: 18 %}</a>
+      <button type="button" class="nav-round" data-cart-toggle aria-label="Cart">
+        {% render 'icon', name: 'cart', size: 19 %}
+        <span class="cart-count js-cart-count" {% if cart.item_count == 0 %}style="display:none"{% endif %}>{{ cart.item_count }}</span>
+      </button>
+    </div>
+    <a href="{{ routes.root_url }}" class="pill nav-mobile__logo">{{ brand }}</a>
+  </div>
+
+  {%- comment -%} Mobile drawer {%- endcomment -%}
+  <div class="mobile-menu" id="MobileMenu">
+    <div class="mobile-menu__head">
+      <span class="mobile-menu__logo">{{ brand }}</span>
+      <button type="button" data-menu-close aria-label="Close menu">{% render 'icon', name: 'close', size: 24 %}</button>
+    </div>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="mobile-menu__search">
+      {% render 'icon', name: 'search', size: 16 %}
+      <input type="search" name="q" placeholder="Search scents" aria-label="Search scents">
+    </form>
+    <nav class="mobile-menu__nav" aria-label="Mobile">
+      {%- for col in perfumes_menu.links -%}
+        {%- for link in col.links limit: 2 -%}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {%- endfor -%}
+      {%- endfor -%}
+      {%- for link in about_menu.links -%}
+        <a href="{{ link.url }}">{{ link.title }}</a>
+      {%- endfor -%}
+    </nav>
+    <a href="{{ section.settings.shop_all_url | default: '/collections/all' }}" class="btn-solid" style="width:100%;margin-top:24px">Shop All</a>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "header", "content": "Menus" },
+    { "type": "link_list", "id": "menu_perfumes", "label": "Perfumes mega-menu", "info": "Top-level items become columns; their children become links." },
+    { "type": "link_list", "id": "menu_about", "label": "About menu" },
+    { "type": "header", "content": "Labels & links" },
+    { "type": "text", "id": "perfumes_label", "label": "Perfumes label", "default": "Perfumes" },
+    { "type": "text", "id": "home_scents_label", "label": "Home Scents label", "default": "Home Scents" },
+    { "type": "url", "id": "home_scents_url", "label": "Home Scents link" },
+    { "type": "text", "id": "quiz_label", "label": "Scent finder label", "default": "AI Scent Finder" },
+    { "type": "url", "id": "quiz_url", "label": "Scent finder link" },
+    { "type": "text", "id": "about_label", "label": "About label", "default": "About" },
+    { "type": "url", "id": "shop_all_url", "label": "Mobile 'Shop All' link" }
+  ]
+}
+{% endschema %}

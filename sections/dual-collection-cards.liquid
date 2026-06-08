@@ -1,0 +1,44 @@
+{%- comment -%} Two side-by-side gradient collection cards (Impressions / Originals) {%- endcomment -%}
+<section class="container-wide duo-cards reveal">
+  {%- for block in section.blocks -%}
+    <a href="{{ block.settings.url }}" class="duo-card" style="background: {{ block.settings.gradient | default: 'linear-gradient(120deg,#DDEBD6,#C7DCC2,#F3D9C0)' }};" {{ block.shopify_attributes }}>
+      <div class="duo-card__copy">
+        <p class="duo-card__title">{{ block.settings.title }}</p>
+        <p class="duo-card__sub">{{ block.settings.subtitle }}</p>
+      </div>
+      {%- if block.settings.image -%}
+        <img class="duo-card__img blend-multiply" src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.title | escape }}" loading="lazy" width="300" height="400">
+      {%- endif -%}
+      <span class="duo-card__arrow">{% render 'icon', name: 'arrow-right', size: 18 %}</span>
+    </a>
+  {%- endfor -%}
+</section>
+
+{% schema %}
+{
+  "name": "Dual collection cards",
+  "max_blocks": 2,
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Mazah Impressions" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Designer-inspired, premium-quality favorites." },
+        { "type": "image_picker", "id": "image", "label": "Bottle image" },
+        { "type": "url", "id": "url", "label": "Link" },
+        { "type": "text", "id": "gradient", "label": "CSS gradient", "default": "linear-gradient(120deg, #DDEBD6 0%, #C7DCC2 50%, #F3D9C0 100%)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dual collection cards",
+      "blocks": [
+        { "type": "card", "settings": { "title": "Mazah Impressions", "subtitle": "Designer-inspired, premium-quality favorites.", "gradient": "linear-gradient(120deg, #DDEBD6 0%, #C7DCC2 50%, #F3D9C0 100%)" } },
+        { "type": "card", "settings": { "title": "Mazah Originals", "subtitle": "Exclusive fragrances crafted in France.", "gradient": "linear-gradient(120deg, #F7E0D2 0%, #F4C9D6 55%, #EAB7CE 100%)" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

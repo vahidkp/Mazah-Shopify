@@ -1,0 +1,113 @@
+{%- comment -%} Footer — SEO link rows, newsletter, link columns, legal {%- endcomment -%}
+<footer class="site-footer">
+  {%- if section.settings.seo_row_1 != blank or section.settings.seo_row_2 != blank -%}
+    <div class="container-wide footer-seo">
+      {%- if section.settings.seo_row_1 != blank -%}
+        <div class="footer-seo__row no-scrollbar">
+          {%- assign items = section.settings.seo_row_1 | split: ',' -%}
+          {%- for item in items -%}<a href="{{ section.settings.seo_link | default: routes.all_products_collection_url }}">{{ item | strip }}</a>{%- endfor -%}
+        </div>
+      {%- endif -%}
+      {%- if section.settings.seo_row_2 != blank -%}
+        <div class="footer-seo__row no-scrollbar">
+          {%- assign items = section.settings.seo_row_2 | split: ',' -%}
+          {%- for item in items -%}<a href="{{ section.settings.seo_link | default: routes.all_products_collection_url }}">Inspired by <strong>{{ item | strip }}</strong></a>{%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <div class="container-wide footer-main">
+    <div>
+      <p class="footer-news__title">{{ section.settings.newsletter_title | default: 'Be the first to know.' }}</p>
+      {%- form 'customer', class: 'footer-news__form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <input type="email" name="contact[email]" placeholder="Enter your email address" aria-label="Email address" required>
+        <button type="submit">Submit</button>
+      {%- endform -%}
+
+      <div class="footer-socials">
+        {%- if settings.social_instagram != blank -%}
+          <a href="{{ settings.social_instagram }}" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        {%- endif -%}
+        {%- if settings.social_tiktok != blank -%}
+          <a href="{{ settings.social_tiktok }}" aria-label="TikTok"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8.245a4.94 4.94 0 0 1-2.89-.928v6.45a4.515 4.515 0 1 1-3.9-4.476v2.317a2.22 2.22 0 1 0 1.555 2.118V2h2.345a2.89 2.89 0 0 0 2.89 2.89z"/></svg></a>
+        {%- endif -%}
+        {%- if settings.social_facebook != blank -%}
+          <a href="{{ settings.social_facebook }}" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+        {%- endif -%}
+        <span class="footer-badge">🐰 Animal Test-Free</span>
+      </div>
+
+      {%- if section.settings.show_country_selector and localization.available_countries.size > 1 -%}
+        {%- form 'localization' -%}
+          <label class="footer-col__title" style="margin-top:32px;margin-bottom:8px;display:block">Shop the following countries.</label>
+          <select name="country_code" onchange="this.form.submit()" style="width:100%;max-width:20rem;font-size:.875rem;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--paper)">
+            {%- for country in localization.available_countries -%}
+              <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>{{ country.name }}</option>
+            {%- endfor -%}
+          </select>
+        {%- endform -%}
+      {%- endif -%}
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'column' -%}
+        {%- assign menu = linklists[block.settings.menu] -%}
+        <div class="footer-col" {{ block.shopify_attributes }}>
+          <p class="footer-col__title">{{ block.settings.title }}</p>
+          <ul>
+            {%- for link in menu.links -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container-wide footer-bottom__inner">
+      <p class="footer-wordmark">{{ settings.brand_name | default: 'mazah' }}</p>
+      <div class="footer-legal">
+        <p>{{ section.settings.copyright | default: '© 2026 Mazah Perfume. All Rights Reserved.' }}</p>
+        {%- assign policies = section.settings.legal_menu -%}
+        {%- if linklists[policies].links.size > 0 -%}
+          <div class="footer-legal__links">
+            {%- for link in linklists[policies].links -%}<a href="{{ link.url }}">{{ link.title }}</a>{%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    { "type": "header", "content": "SEO link rows" },
+    { "type": "textarea", "id": "seo_row_1", "label": "Row 1 (comma-separated)", "default": "Vanilla Perfume, Jasmine Perfume, Rose Perfume, Amber Perfume, Lavender Perfume, Oud Perfume, Sandalwood Perfume, Musk Perfume" },
+    { "type": "textarea", "id": "seo_row_2", "label": "Row 2 — 'Inspired by' (comma-separated)", "default": "Baccarat Rouge 540, Coco Mademoiselle, Sauvage, Good Girl, Oud Wood, Portrait of a Lady, Daisy" },
+    { "type": "url", "id": "seo_link", "label": "SEO links destination" },
+    { "type": "header", "content": "Newsletter" },
+    { "type": "text", "id": "newsletter_title", "label": "Newsletter heading", "default": "Be the first to know." },
+    { "type": "checkbox", "id": "show_country_selector", "label": "Show country selector", "default": true },
+    { "type": "header", "content": "Bottom bar" },
+    { "type": "text", "id": "copyright", "label": "Copyright", "default": "© 2026 Mazah Perfume. All Rights Reserved." },
+    { "type": "link_list", "id": "legal_menu", "label": "Legal / policy menu" }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Link column",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Heading", "default": "Discover." },
+        { "type": "link_list", "id": "menu", "label": "Menu" }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [ { "name": "Footer" } ]
+}
+{% endschema %}

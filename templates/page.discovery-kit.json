@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "discovery-kit",
+      "settings": {
+        "samples_collection": "bestsellers",
+        "fallback_url": "shopify://collections/all",
+        "quiz_url": "shopify://pages/quiz"
+      }
+    }
+  },
+  "order": ["main"]
+}

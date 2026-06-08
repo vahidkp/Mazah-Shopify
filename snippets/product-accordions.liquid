@@ -1,0 +1,69 @@
+{%- comment -%}
+  PDP accordions: About, Shipping, Returns, FAQs, Details.
+  Metafields (custom): story (richtext), longevity, sillage, concentration,
+  season, best_for. Falls back to product.description for About.
+{%- endcomment -%}
+{%- liquid
+  assign mf = product.metafields.custom
+  assign story = mf.story.value
+  assign brand = mf.inspired_by_brand.value
+  assign scent = mf.inspired_by_scent.value
+  assign longevity = mf.longevity.value
+  assign sillage = mf.sillage.value
+  assign concentration = mf.concentration.value
+  assign season = mf.season.value
+  assign best_for = mf.best_for.value
+-%}
+
+<div class="accordion">
+  {%- comment -%} About (open by default) {%- endcomment -%}
+  <div class="accordion__item is-open">
+    <button type="button" class="accordion__btn">
+      <span class="ttl">About</span>
+      <span class="accordion__icon-plus">{% render 'icon', name: 'plus', size: 16 %}</span>
+      <span class="accordion__icon-minus">{% render 'icon', name: 'minus', size: 16 %}</span>
+    </button>
+    <div class="accordion__panel"><div><div class="content">
+      {{ product.description }}
+      {%- if story -%}<p>{{ story }}</p>{%- endif -%}
+    </div></div></div>
+  </div>
+
+  {%- comment -%} Shipping {%- endcomment -%}
+  <div class="accordion__item">
+    <button type="button" class="accordion__btn"><span class="ttl">Shipping</span><span class="accordion__icon-plus">{% render 'icon', name: 'plus', size: 16 %}</span><span class="accordion__icon-minus">{% render 'icon', name: 'minus', size: 16 %}</span></button>
+    <div class="accordion__panel"><div><div class="content"><p>Free standard shipping on all orders over {{ settings.free_ship_threshold | default: 100 | times: 100 | money_without_trailing_zeros }}. Orders ship within 24 hours and arrive in 3&ndash;5 business days. Mazah+ members enjoy free shipping on every order.</p></div></div></div>
+  </div>
+
+  {%- comment -%} Returns {%- endcomment -%}
+  <div class="accordion__item">
+    <button type="button" class="accordion__btn"><span class="ttl">Returns</span><span class="accordion__icon-plus">{% render 'icon', name: 'plus', size: 16 %}</span><span class="accordion__icon-minus">{% render 'icon', name: 'minus', size: 16 %}</span></button>
+    <div class="accordion__panel"><div><div class="content"><p>Not in love? Free exchanges for all. Free returns within 30 days with Mazah+. Simply reach out to our team and we will make it right.</p></div></div></div>
+  </div>
+
+  {%- comment -%} FAQs {%- endcomment -%}
+  <div class="accordion__item">
+    <button type="button" class="accordion__btn"><span class="ttl">FAQs</span><span class="accordion__icon-plus">{% render 'icon', name: 'plus', size: 16 %}</span><span class="accordion__icon-minus">{% render 'icon', name: 'minus', size: 16 %}</span></button>
+    <div class="accordion__panel"><div><div class="content">
+      <p class="q">Is this an authentic designer perfume?</p>
+      <p>{% if brand %}No &mdash; it&rsquo;s a Mazah Impression: our own premium interpretation inspired by {{ brand }}{% if scent %}&rsquo;s {{ scent }}{% endif %}, crafted in France at a fraction of the price.{% else %}Our fragrances are crafted in France with premium materials at an honest price.{% endif %}</p>
+      {%- if longevity -%}<p class="q">How long does it last?</p><p>{{ longevity }}{% if sillage %} with {{ sillage | downcase }} projection.{% endif %}</p>{%- endif -%}
+    </div></div></div>
+  </div>
+
+  {%- comment -%} Details {%- endcomment -%}
+  {%- if concentration or longevity or sillage or season or best_for -%}
+    <div class="accordion__item">
+      <button type="button" class="accordion__btn"><span class="ttl">Details</span><span class="accordion__icon-plus">{% render 'icon', name: 'plus', size: 16 %}</span><span class="accordion__icon-minus">{% render 'icon', name: 'minus', size: 16 %}</span></button>
+      <div class="accordion__panel"><div><div class="content">
+        <ul style="display:flex;flex-direction:column;gap:6px">
+          {%- if concentration -%}<li><span class="q">Concentration:</span> {{ concentration }}</li>{%- endif -%}
+          {%- if longevity -%}<li><span class="q">Longevity:</span> {{ longevity }}</li>{%- endif -%}
+          {%- if sillage -%}<li><span class="q">Sillage:</span> {{ sillage }}</li>{%- endif -%}
+          {%- if season -%}<li><span class="q">Best season:</span> {{ season }}</li>{%- endif -%}
+          {%- if best_for -%}<li><span class="q">Best for:</span> {{ best_for }}</li>{%- endif -%}
+        </ul>
+      </div></div></div>
+    </div>
+  {%- endif -%}
+</div>

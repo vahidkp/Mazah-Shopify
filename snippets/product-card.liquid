@@ -1,0 +1,129 @@
+{%- comment -%}
+  Product card — Dossier-style. Three variants: 'grid' (default), 'featured', 'drop'.
+  Usage: {% render 'product-card', product: product, variant: 'drop', priority: true %}
+
+  Custom fields are read from metafields with sensible fallbacks so the card
+  renders even on a bare Shopify product:
+    custom.inspired_by_brand / custom.inspired_by_scent (text)
+    custom.family   (single line: warm|flowery|fresh|woody|gourmand|earthy)
+    custom.gender   (single line: women|men|unisex)
+    custom.card_color / custom.tint (color)
+    custom.card_text_dark (boolean — dark text on a light drop card)
+    reviews.rating / reviews.rating_count (Judge.me) or custom.rating/custom.review_count
+{%- endcomment -%}
+
+{%- liquid
+  assign v = variant | default: 'grid'
+  assign mf = product.metafields.custom
+
+  assign tint = mf.tint | default: '#F4F1EC'
+  assign card_color = mf.card_color | default: tint
+  assign brand = mf.inspired_by_brand.value
+  assign scent = mf.inspired_by_scent.value
+  assign family = mf.family.value
+  assign gender = mf.gender.value
+
+  assign discount = settings.member_discount | default: 10
+  assign factor = 100 | minus: discount
+  assign guest = product.price
+  assign member = guest | times: factor | divided_by: 100
+
+  assign rating = product.metafields.reviews.rating.value.rating | default: mf.rating.value
+  assign rating_count = product.metafields.reviews.rating_count.value | default: mf.review_count.value
+
+  assign first_variant = product.selected_or_first_available_variant
+  assign img = product.featured_image
+  assign loading = 'lazy'
+  if priority
+    assign loading = 'eager'
+  endif
+
+  # Two-weight name: bold the last word
+  assign words = product.title | split: ' '
+  assign last_word = words | last
+  assign lead_words = ''
+  assign wc = words | size
+  if wc > 1
+    assign lead_count = wc | minus: 1
+    assign lead_words = words | slice: 0, lead_count | join: ' '
+  endif
+-%}
+
+{%- capture product_name -%}
+  <span class="product-name pc__name">
+    {%- if lead_words != blank %}<span class="lead">{{ lead_words }} </span>{% endif -%}
+    <strong>{{ last_word }}</strong>
+  </span>
+{%- endcapture -%}
+
+{%- capture heart -%}
+  <button type="button" class="pc__heart" data-product-id="{{ product.id }}" aria-label="Add to wishlist">
+    {% render 'icon', name: 'heart', size: 14 %}
+  </button>
+{%- endcapture -%}
+
+{%- if v == 'drop' -%}
+  {%- assign text_dark = mf.card_text_dark.value -%}
+  <a href="{{ product.url }}" class="pc pc--drop {% if text_dark %}is-light{% else %}is-dark{% endif %}">
+    <div class="pc__media" style="background-color: {{ card_color }};">
+      {{ heart }}
+      {%- if img -%}
+        {{ img | image_url: width: 600 | image_tag: loading: loading, class: 'blend-multiply', alt: product.title, widths: '300,400,600,800', sizes: '(max-width:640px) 80vw, 25vw' }}
+      {%- endif -%}
+      {%- unless text_dark -%}<div class="pc__scrim"></div>{%- endunless -%}
+      <div class="pc__overlay">
+        {{ product_name }}
+        {%- if brand -%}<p class="pc__inspired">Inspired by {{ brand }}{% if scent %}&rsquo;s {{ scent }}{% endif %}</p>{%- endif -%}
+        <button type="button" class="pc__addbtn {% if text_dark %}pc__addbtn--onlight{% else %}pc__addbtn--ondark{% endif %}"
+          data-add-to-cart data-variant-id="{{ first_variant.id }}">
+          ADD TO CART&nbsp;&nbsp;{{ guest | money }}
+        </button>
+      </div>
+    </div>
+  </a>
+
+{%- elsif v == 'featured' -%}
+  <a href="{{ product.url }}" class="pc pc--featured">
+    <div class="pc__media" style="background-color: {{ tint }};">
+      {{ heart }}
+      {%- if img -%}
+        {{ img | image_url: width: 600 | image_tag: loading: loading, class: 'blend-multiply', alt: product.title, widths: '300,400,600', sizes: '(max-width:640px) 90vw, 33vw' }}
+      {%- endif -%}
+    </div>
+    <div class="pc__info">
+      {{ product_name }}
+      {%- if rating -%}<div class="pc__rating">{% render 'star-rating', rating: rating, count: rating_count, size: 13 %}</div>{%- endif -%}
+      {%- if brand -%}<p class="pc__inspired">Inspired by <strong>{{ brand }}{% if scent %}&rsquo;s {{ scent }}{% endif %}</strong></p>{%- endif -%}
+      <button type="button" class="btn btn--outline pc__addbtn-out" data-add-to-cart data-variant-id="{{ first_variant.id }}">
+        ADD TO CART&nbsp;&nbsp;{{ guest | money }}
+      </button>
+    </div>
+  </a>
+
+{%- else -%}
+  <a href="{{ product.url }}" class="pc pc--grid">
+    <div class="pc__media" style="background-color: {{ tint }};">
+      <span class="pc__brandmark">{{ settings.brand_name | default: 'mazah' }}</span>
+      {%- if gender -%}<span class="pc__gender">{{ gender | capitalize }}</span>{%- endif -%}
+      {{ heart }}
+      {%- if img -%}
+        {{ img | image_url: width: 600 | image_tag: loading: 'lazy', class: 'blend-multiply', alt: product.title, widths: '300,400,600', sizes: '(max-width:640px) 50vw, 25vw' }}
+      {%- endif -%}
+      <button type="button" class="pc__quickadd" data-add-to-cart data-variant-id="{{ first_variant.id }}">
+        ADD TO CART · {{ guest | money }}
+      </button>
+    </div>
+    <div class="pc__info">
+      <div class="pc__row">
+        {{ product_name }}
+        {% render 'family-tag', family: family %}
+      </div>
+      {%- if rating -%}<div class="pc__rating">{% render 'star-rating', rating: rating, count: rating_count, size: 12 %}</div>{%- endif -%}
+      {%- if brand -%}<p class="pc__inspired">Inspired by <strong>{{ brand }}{% if scent %}&rsquo;s {{ scent }}{% endif %}</strong></p>{%- endif -%}
+      <p class="pc__price">
+        <span class="guest-label">Guest: </span><span class="guest-val">{{ guest | money }}</span>
+        <span class="member-val">member: {{ member | money }}</span>
+      </p>
+    </div>
+  </a>
+{%- endif -%}

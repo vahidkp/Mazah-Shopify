@@ -1,0 +1,22 @@
+{%- comment -%} Contact page with form {%- endcomment -%}
+<div class="page-shell" style="max-width:40rem">
+  <h1>{{ page.title | default: 'Contact Us' }}</h1>
+  {%- if page.content != blank -%}<div class="rte" style="margin-bottom:24px">{{ page.content }}</div>{%- endif -%}
+
+  {%- form 'contact' -%}
+    {%- if form.posted_successfully? -%}
+      <p class="cart-drawer__ship" style="border-radius:8px;margin-bottom:16px"><span class="ok">Thanks — we'll be in touch shortly.</span></p>
+    {%- endif -%}
+    {{ form.errors | default_errors }}
+    <div style="display:grid;gap:12px">
+      <input type="text" name="contact[name]" placeholder="Your name" style="border:1px solid var(--line);border-radius:8px;padding:12px 16px" required>
+      <input type="email" name="contact[email]" placeholder="Email" style="border:1px solid var(--line);border-radius:8px;padding:12px 16px" required>
+      <textarea name="contact[body]" rows="6" placeholder="How can we help?" style="border:1px solid var(--line);border-radius:8px;padding:12px 16px" required></textarea>
+      <button type="submit" class="btn btn--solid btn--lg" style="justify-self:start">Send Message</button>
+    </div>
+  {%- endform -%}
+</div>
+
+{% schema %}
+{ "name": "Contact form", "settings": [], "presets": [ { "name": "Contact form" } ] }
+{% endschema %}

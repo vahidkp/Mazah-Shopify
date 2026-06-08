@@ -1,0 +1,28 @@
+<div class="page-shell">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+    <h1>My Account</h1>
+    <a href="{{ routes.account_logout_url }}" class="muted" style="font-size:.875rem;text-decoration:underline">Log out</a>
+  </div>
+  <p class="muted">Hello, {{ customer.first_name | default: customer.email }}.</p>
+  <h2 class="rte" style="margin-top:32px">Order history</h2>
+  {%- paginate customer.orders by 20 -%}
+    {%- if customer.orders.size > 0 -%}
+      <table style="width:100%;border-collapse:collapse;font-size:.875rem;margin-top:12px">
+        <thead><tr style="text-align:left;border-bottom:1px solid var(--line)"><th style="padding:8px 0">Order</th><th>Date</th><th>Total</th><th>Status</th></tr></thead>
+        <tbody>
+          {%- for order in customer.orders -%}
+            <tr style="border-bottom:1px solid var(--line)">
+              <td style="padding:8px 0"><a href="{{ order.customer_url }}" style="text-decoration:underline">{{ order.name }}</a></td>
+              <td>{{ order.created_at | date: '%b %-d, %Y' }}</td>
+              <td>{{ order.total_price | money }}</td>
+              <td>{{ order.financial_status_label }}</td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    {%- else -%}
+      <p class="muted">You haven't placed any orders yet.</p>
+    {%- endif -%}
+  {%- endpaginate -%}
+  <p style="margin-top:24px"><a href="{{ routes.account_addresses_url }}" class="btn btn--outline">Manage addresses</a></p>
+</div>

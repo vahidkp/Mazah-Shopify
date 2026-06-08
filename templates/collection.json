@@ -1,0 +1,21 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "blocks": {
+        "all": { "type": "tab", "settings": { "label": "All Perfumes", "url": "shopify://collections/all", "collection": "all" } },
+        "impressions": { "type": "tab", "settings": { "label": "Impressions", "url": "shopify://collections/impressions", "collection": "impressions" } },
+        "originals": { "type": "tab", "settings": { "label": "Originals", "url": "shopify://collections/originals", "collection": "originals" } },
+        "giftsets": { "type": "tab", "settings": { "label": "Gift Sets", "url": "shopify://pages/discovery-kit", "collection": "gift-sets" } },
+        "bestsellers": { "type": "tab", "settings": { "label": "Bestsellers", "url": "shopify://collections/bestsellers", "collection": "bestsellers" } },
+        "new": { "type": "tab", "settings": { "label": "New Arrivals", "url": "shopify://collections/new-arrivals", "collection": "new-arrivals" } }
+      },
+      "block_order": ["all", "impressions", "originals", "giftsets", "bestsellers", "new"],
+      "settings": {
+        "products_per_page": 12,
+        "intro": "<p>Explore designer-inspired Impressions and Mazah Originals perfumes, developed in France.</p>"
+      }
+    }
+  },
+  "order": ["main"]
+}

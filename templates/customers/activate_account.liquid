@@ -1,0 +1,10 @@
+<div class="page-shell" style="max-width:28rem">
+  <h1>Activate account</h1>
+  {%- form 'activate_customer_password' -%}
+    {{ form.errors | default_errors }}
+    <input type="password" name="customer[password]" placeholder="Password" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:12px" required>
+    <input type="password" name="customer[password_confirmation]" placeholder="Confirm password" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:12px" required>
+    <button type="submit" class="btn btn--solid btn--lg" style="width:100%">Activate</button>
+    <button type="submit" name="decline" class="btn btn--ghost" style="width:100%;margin-top:8px">Decline invitation</button>
+  {%- endform -%}
+</div>

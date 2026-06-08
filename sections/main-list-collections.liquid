@@ -1,0 +1,21 @@
+{%- comment -%} /collections — index of all collections {%- endcomment -%}
+<div class="plp">
+  <h1 style="font-family:var(--font-display);font-size:1.875rem;font-weight:700;letter-spacing:-.04em;margin-bottom:24px">Collections</h1>
+  <div class="plp-grid">
+    {%- for collection in collections -%}
+      <a href="{{ collection.url }}" class="cat-card" style="aspect-ratio:4/3">
+        {%- if collection.featured_image -%}
+          {{ collection.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: collection.title }}
+        {%- else -%}
+          <div style="position:absolute;inset:0;background:var(--card)"></div>
+        {%- endif -%}
+        <div class="cat-card__scrim"></div>
+        <span class="cat-card__label">{{ collection.title }}</span>
+      </a>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{ "name": "List collections", "settings": [] }
+{% endschema %}

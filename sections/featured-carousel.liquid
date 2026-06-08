@@ -1,0 +1,63 @@
+{%- comment -%}
+  Horizontal product carousel. Used for "latest drops" and "featured in France".
+  Card style + item width driven by settings.
+{%- endcomment -%}
+{%- liquid
+  assign coll = collections[section.settings.collection]
+  assign card = section.settings.card_variant | default: 'drop'
+  assign limit = section.settings.product_limit | default: 8
+  case card
+    when 'drop'
+      assign item_w = 'min(332px, 72vw)'
+    when 'featured'
+      assign item_w = 'min(360px, 78vw)'
+    else
+      assign item_w = 'min(280px, 70vw)'
+  endcase
+-%}
+
+<section class="carousel container-wide reveal">
+  <div class="carousel__head">
+    <div class="carousel__titles">
+      <h2 class="carousel__title">{{ section.settings.title }}</h2>
+      {%- if section.settings.view_all_url != blank -%}
+        <a href="{{ section.settings.view_all_url }}" class="carousel__viewall">View all</a>
+      {%- endif -%}
+    </div>
+    <div class="carousel__nav">
+      <button type="button" class="carousel__btn" data-dir="prev" aria-label="Previous">{% render 'icon', name: 'chevron-left', size: 16 %}</button>
+      <button type="button" class="carousel__btn" data-dir="next" aria-label="Next">{% render 'icon', name: 'chevron-right', size: 16 %}</button>
+    </div>
+  </div>
+
+  <div class="carousel__track no-scrollbar">
+    {%- for product in coll.products limit: limit -%}
+      <div class="carousel__item" style="width: {{ item_w }};">
+        {% render 'product-card', product: product, variant: card, priority: forloop.first %}
+      </div>
+    {%- else -%}
+      <p class="muted">Add products to this collection to populate the carousel.</p>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product carousel",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Our latest drops" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "url", "id": "view_all_url", "label": "'View all' link" },
+    {
+      "type": "select", "id": "card_variant", "label": "Card style", "default": "drop",
+      "options": [
+        { "value": "drop", "label": "Colorful drop" },
+        { "value": "featured", "label": "Featured (white)" },
+        { "value": "grid", "label": "Grid" }
+      ]
+    },
+    { "type": "range", "id": "product_limit", "label": "Max products", "min": 4, "max": 12, "step": 1, "default": 8 }
+  ],
+  "presets": [ { "name": "Product carousel" } ]
+}
+{% endschema %}

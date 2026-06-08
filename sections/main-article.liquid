@@ -1,0 +1,14 @@
+{%- comment -%} Article {%- endcomment -%}
+<article class="page-shell" style="max-width:768px">
+  <a href="{{ blog.url }}" class="muted" style="font-size:.875rem;display:inline-flex;align-items:center;gap:4px;margin-bottom:16px">{% render 'icon', name: 'chevron-left', size: 14 %} {{ blog.title }}</a>
+  <h1>{{ article.title }}</h1>
+  <p class="muted" style="font-size:.875rem;margin-bottom:24px">{{ article.published_at | date: '%B %-d, %Y' }}{% if article.author %} · {{ article.author }}{% endif %}</p>
+  {%- if article.image -%}
+    <div style="position:relative;aspect-ratio:16/9;border-radius:var(--radius-card);overflow:hidden;background:var(--card);margin-bottom:32px">{{ article.image | image_url: width: 1200 | image_tag: alt: article.title, style: 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover' }}</div>
+  {%- endif -%}
+  <div class="rte">{{ article.content }}</div>
+</article>
+
+{% schema %}
+{ "name": "Article", "settings": [] }
+{% endschema %}

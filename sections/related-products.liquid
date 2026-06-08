@@ -1,0 +1,30 @@
+{%- comment -%} "You Might Love" — Shopify product recommendations {%- endcomment -%}
+<section class="related" data-recommendations data-product-id="{{ product.id }}">
+  <h2 class="related__title">You Might <span class="lead">Love</span></h2>
+  <div class="related__grid">
+    {%- assign recs = recommendations.products | default: empty -%}
+    {%- if recommendations.performed and recommendations.products_count > 0 -%}
+      {%- for product in recommendations.products limit: 4 -%}
+        {% render 'product-card', product: product %}
+      {%- endfor -%}
+    {%- else -%}
+      {%- comment -%} Fallback: other products from the same collection {%- endcomment -%}
+      {%- assign source = product.collections.first -%}
+      {%- assign shown = 0 -%}
+      {%- for p in source.products limit: 5 -%}
+        {%- if p.id != product.id and shown < 4 -%}
+          {% render 'product-card', product: p %}
+          {%- assign shown = shown | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Related products",
+  "settings": [],
+  "presets": [ { "name": "Related products" } ]
+}
+{% endschema %}

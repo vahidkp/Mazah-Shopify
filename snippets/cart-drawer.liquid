@@ -1,0 +1,69 @@
+{%- comment -%}
+  Slide-in cart drawer. Items rendered server-side on first paint, then
+  re-rendered by theme.js (Drawer.render) after every Ajax cart change.
+{%- endcomment -%}
+{%- assign threshold = settings.free_ship_threshold | default: 100 | times: 100 -%}
+{%- assign free = false -%}
+{%- if cart.total_price >= threshold -%}{%- assign free = true -%}{%- endif -%}
+
+<div class="cart-drawer-overlay" data-cart-close></div>
+<aside class="cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping cart">
+  <div class="cart-drawer__head">
+    <h2>Your Cart <span class="n cart-drawer__count">{% if cart.item_count > 0 %}({{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %}){% endif %}</span></h2>
+    <button type="button" class="cart-drawer__close" data-cart-close aria-label="Close cart">{% render 'icon', name: 'close', size: 22 %}</button>
+  </div>
+
+  <div class="cart-drawer__ship" {% if cart.item_count == 0 %}style="display:none"{% endif %}>
+    {%- if free -%}
+      <span class="ok">🎉 You&rsquo;ve unlocked FREE shipping!</span>
+    {%- else -%}
+      You&rsquo;re <span class="ink">{{ threshold | minus: cart.total_price | money }}</span> away from <span class="ink">FREE shipping</span>.
+    {%- endif -%}
+  </div>
+
+  <div class="cart-drawer__items">
+    {%- if cart.item_count == 0 -%}
+      <div class="cart-empty">
+        {% render 'icon', name: 'cart', size: 44 %}
+        <p class="t">Your cart is empty</p>
+        <p class="s">Explore our perfumes to find your signature scent.</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn-solid">Shop All</a>
+      </div>
+    {%- else -%}
+      {%- for item in cart.items -%}
+        <div class="cart-line" data-line="{{ forloop.index }}">
+          <div class="cart-line__media">
+            {%- if item.image -%}{{ item.image | image_url: width: 160 | image_tag: loading: 'lazy', alt: item.product.title }}{%- endif -%}
+          </div>
+          <div class="cart-line__body">
+            <p class="cart-line__name">{{ item.product.title }}</p>
+            <p class="cart-line__variant">{{ item.variant.title }}</p>
+            <div class="cart-line__row">
+              <div class="cart-line__qty">
+                <button type="button" class="js-qty" data-line="{{ forloop.index }}" data-qty="{{ item.quantity | minus: 1 }}" aria-label="Decrease">{% render 'icon', name: 'minus', size: 12 %}</button>
+                <span>{{ item.quantity }}</span>
+                <button type="button" class="js-qty" data-line="{{ forloop.index }}" data-qty="{{ item.quantity | plus: 1 }}" aria-label="Increase">{% render 'icon', name: 'plus', size: 12 %}</button>
+              </div>
+              <p class="cart-line__price">{{ item.final_line_price | money }}</p>
+            </div>
+          </div>
+          <button type="button" class="cart-line__remove js-qty" data-line="{{ forloop.index }}" data-qty="0" aria-label="Remove">{% render 'icon', name: 'trash', size: 15 %}</button>
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+
+  <div class="cart-drawer__foot" {% if cart.item_count == 0 %}style="display:none"{% endif %}>
+    <div class="cart-promo">
+      <input type="text" placeholder="Promo code" aria-label="Promo code">
+      <button type="button">Apply</button>
+    </div>
+    <div class="cart-totals">
+      <div class="r"><span>Subtotal</span><span class="js-cart-subtotal">{{ cart.total_price | money }}</span></div>
+      <div class="r"><span>Shipping</span><span class="js-cart-shipping">{% if free %}<span class="ok">Free</span>{% else %}{{ 999 | money }}{% endif %}</span></div>
+      <div class="total"><span>Total</span><span class="js-cart-total">{% if free %}{{ cart.total_price | money }}{% else %}{{ cart.total_price | plus: 999 | money }}{% endif %}</span></div>
+    </div>
+    <a href="/checkout" class="btn btn--solid btn--lg btn--block" style="width:100%">Checkout</a>
+    <button type="button" class="cart-continue" data-cart-close>Continue Shopping</button>
+  </div>
+</aside>

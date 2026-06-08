@@ -1,0 +1,192 @@
+{%- comment -%}
+  Product page (PDP). Reads custom metafields with fallbacks. See README for
+  the metafield list. Variants drive the size selector + pricing.
+{%- endcomment -%}
+{%- liquid
+  assign mf = product.metafields.custom
+  assign tint = mf.tint | default: '#F4F1EC'
+  assign brand = mf.inspired_by_brand.value
+  assign scent = mf.inspired_by_scent.value
+  assign family = mf.family.value
+  assign retail = mf.retail_price.value
+  assign discount = settings.member_discount | default: 10
+  assign factor = 100 | minus: discount
+
+  assign rating = product.metafields.reviews.rating.value.rating | default: mf.rating.value
+  assign rating_count = product.metafields.reviews.rating_count.value | default: mf.review_count.value
+
+  assign current = product.selected_or_first_available_variant
+  assign collection_handle = product.metafields.custom.collection_label.value
+
+  # two-weight name
+  assign words = product.title | split: ' '
+  assign last_word = words | last
+  assign wc = words | size
+  assign lead_words = ''
+  if wc > 1
+    assign lead_count = wc | minus: 1
+    assign lead_words = words | slice: 0, lead_count | join: ' '
+  endif
+
+  # best-value variant (lowest price per ml)
+  assign best_ppm = 999999
+  assign best_id = 0
+  for v in product.variants
+    assign ml = v.title | downcase | remove: 'ml' | remove: ' ' | times: 1
+    if ml > 0
+      assign ppm = v.price | divided_by: ml
+      if ppm < best_ppm
+        assign best_ppm = ppm
+        assign best_id = v.id
+      endif
+    endif
+  endfor
+-%}
+
+<div class="pdp">
+  {%- comment -%} Breadcrumb {%- endcomment -%}
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ collection.url | default: routes.all_products_collection_url }}" style="display:inline-flex;align-items:center;gap:4px">{% render 'icon', name: 'chevron-left', size: 14 %} Back</a>
+    <span class="sep">{% render 'icon', name: 'chevron-right', size: 12 %}</span>
+    <a href="{{ routes.all_products_collection_url }}">Perfumes</a>
+    {%- if collection -%}
+      <span class="sep">{% render 'icon', name: 'chevron-right', size: 12 %}</span>
+      <a href="{{ collection.url }}">{{ collection.title }}</a>
+    {%- endif -%}
+    <span class="sep">{% render 'icon', name: 'chevron-right', size: 12 %}</span>
+    <span class="current">{{ product.title }}</span>
+  </nav>
+
+  <section class="pdp-hero">
+    <div class="pdp-grid">
+      {%- comment -%} ============ LEFT: gallery + features ============ {%- endcomment -%}
+      <div class="pdp-left">
+        <div class="gallery">
+          {%- if product.images.size > 1 -%}
+            <div class="gallery__thumbs no-scrollbar">
+              {%- for image in product.images -%}
+                <button type="button" class="gallery__thumb {% if forloop.first %}is-active{% endif %}" data-full="{{ image | image_url: width: 1000 }}" style="background-color:{{ tint }}" aria-label="View image {{ forloop.index }}">
+                  {{ image | image_url: width: 128 | image_tag: loading: 'lazy', alt: product.title }}
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+          <div class="gallery__main" style="background-color:{{ tint }}">
+            {%- if product.featured_image -%}
+              {{ product.featured_image | image_url: width: 1000 | image_tag: loading: 'eager', fetchpriority: 'high', class: 'blend-multiply', alt: product.title, sizes: '(max-width:768px) 100vw, 50vw', widths: '500,750,1000' }}
+            {%- endif -%}
+          </div>
+        </div>
+
+        {%- comment -%} PDP features {%- endcomment -%}
+        <div class="pdp-features">
+          <div class="pdp-features__grid">
+            <div class="pdp-feature">{% render 'icon', name: 'rotate', size: 22 %}<div><p>Free Returns</p><p>with Mazah+</p></div></div>
+            <div class="pdp-feature">{% render 'icon', name: 'map-pin', size: 22 %}<div><p>Crafted in France</p></div></div>
+            <div class="pdp-feature">{% render 'icon', name: 'award', size: 22 %}<div><p>6+ Million</p><p>bottles sold</p></div></div>
+            <div class="pdp-feature">{% render 'icon', name: 'tag', size: 22 %}<div><p>Up to 30% Off</p><p>with Mazah+</p></div></div>
+          </div>
+          <div class="pdp-newlook">
+            <div class="pdp-newlook__copy">
+              <p class="k">Same Scent</p>
+              <p class="v">New Look</p>
+              <p class="d">Our refreshed bottle — the fragrance you love, inside.</p>
+            </div>
+            <div class="pdp-newlook__media" style="background-color:{{ tint }}">
+              {%- if product.featured_image -%}{{ product.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', class: 'blend-multiply', alt: product.title }}{%- endif -%}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} ============ RIGHT: info + scent notes + accordions ============ {%- endcomment -%}
+      <div class="pdp-right">
+        {%- comment -%} ---- Product info ---- {%- endcomment -%}
+        <div class="pinfo" data-product-form data-variants='{{ product.variants | json | escape }}'>
+          <div>
+            <h1 class="pinfo__title product-name">
+              {%- if lead_words != blank %}<span class="lead" style="font-weight:400">{{ lead_words }} </span>{% endif -%}
+              <strong>{{ last_word }}</strong>
+            </h1>
+            <a href="#reviews" class="pinfo__reviews">
+              {% render 'star-rating', rating: rating, count: rating_count, size: 15 %}
+              <span class="seemore">See reviews</span>
+            </a>
+            {%- if brand -%}
+              <p class="pinfo__inspired">Inspired by <strong>{{ brand }}{% if scent %}&rsquo;s {{ scent }}{% endif %}</strong></p>
+            {%- endif -%}
+          </div>
+
+          <div class="pinfo__price">
+            <span class="now js-price-now">{{ current.price | money }}</span>
+            <span class="member">member: <span class="js-price-member">{{ current.price | times: factor | divided_by: 100 | money }}</span></span>
+            {%- if retail -%}<span class="retail">Retail {{ retail | times: 100 | money }}</span>{%- endif -%}
+          </div>
+
+          {%- comment -%} Size selector from variants {%- endcomment -%}
+          {%- if product.variants.size > 1 -%}
+            <div>
+              <p class="eyebrow" style="margin-bottom:8px">Size</p>
+              <div class="sizes">
+                {%- for v in product.variants -%}
+                  <button type="button" class="size-btn {% if v.id == current.id %}is-active{% endif %}" data-variant-id="{{ v.id }}" {% unless v.available %}disabled{% endunless %}>
+                    {%- if v.id == best_id and product.variants.size > 1 -%}<span class="size-btn__best">Best Value</span>{%- endif -%}
+                    <span class="size-btn__ml">{{ v.title }}</span>
+                    <span class="size-btn__price">{{ v.price | money }}</span>
+                  </button>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+
+          <div class="pinfo__meta">
+            <span class="item">{% render 'icon', name: 'map-pin', size: 14 %} Crafted in France</span>
+            {%- if family -%}
+              <span class="item" style="color:var(--ink)">Scent Family: {% render 'family-tag', family: family %}</span>
+            {%- endif -%}
+          </div>
+
+          {%- if current.inventory_management and current.inventory_quantity > 0 and current.inventory_quantity <= 10 -%}
+            <p class="pinfo__lowstock">🔥 Only {{ current.inventory_quantity }} left — selling fast</p>
+          {%- endif -%}
+
+          <div class="pinfo__actions">
+            <div class="pinfo__addrow">
+              <div class="qty">
+                <button type="button" data-qty-step="-1" aria-label="Decrease quantity">{% render 'icon', name: 'minus', size: 14 %}</button>
+                <input type="text" class="qty__val js-qty-input" value="1" inputmode="numeric" aria-label="Quantity" readonly>
+                <button type="button" data-qty-step="1" aria-label="Increase quantity">{% render 'icon', name: 'plus', size: 14 %}</button>
+              </div>
+              <button type="button" class="btn btn--solid" data-add-to-cart data-variant-id="{{ current.id }}" {% unless current.available %}disabled{% endunless %}>
+                {%- if current.available -%}ADD TO CART{%- else -%}SOLD OUT{%- endif -%}
+              </button>
+            </div>
+            <button type="button" class="btn btn--outline js-wishlist" data-product-id="{{ product.id }}" style="width:100%">
+              {% render 'icon', name: 'heart', size: 16 %} <span class="js-wish-label">Save for Later</span>
+            </button>
+          </div>
+
+          <p class="pinfo__trust">
+            <span class="item">{% render 'icon', name: 'check', size: 12 %} Free shipping over {{ settings.free_ship_threshold | default: 100 | times: 100 | money_without_trailing_zeros }}</span>
+            <span class="item">{% render 'icon', name: 'check', size: 12 %} Free 30-day returns</span>
+            <span class="item">{% render 'icon', name: 'check', size: 12 %} Ships in 24h</span>
+          </p>
+        </div>
+
+        {%- comment -%} ---- Scent notes ---- {%- endcomment -%}
+        {% render 'scent-notes', product: product %}
+
+        {%- comment -%} ---- Accordions ---- {%- endcomment -%}
+        {% render 'product-accordions', product: product %}
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Product page",
+  "settings": [],
+  "presets": [ { "name": "Product page" } ]
+}
+{% endschema %}

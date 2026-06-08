@@ -1,0 +1,138 @@
+{%- comment -%}
+  Collection (PLP) — sub-nav tabs, search, native storefront filters as
+  dropdown facets, sort, product grid with interleaved promo cards.
+  Filters require Shopify's Search & Discovery app for facet values.
+{%- endcomment -%}
+{%- liquid
+  assign per_page = section.settings.products_per_page | default: 12
+-%}
+
+<div class="plp">
+  {%- comment -%} ---- Sub-nav tabs ---- {%- endcomment -%}
+  {%- if section.blocks.size > 0 -%}
+    <div class="plp-tabs no-scrollbar">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'tab' -%}
+          {%- assign tab_handle = block.settings.collection | default: '' -%}
+          {%- if collection.handle == tab_handle -%}
+            {%- assign is_active = true -%}{%- else -%}{%- assign is_active = false -%}
+          {%- endif -%}
+          <a href="{{ block.settings.url }}" class="plp-tab {% if is_active %}is-active{% endif %}" {{ block.shopify_attributes }}>{{ block.settings.label }}</a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ---- Filter / sort bar (one GET form) ---- {%- endcomment -%}
+  <form id="CollectionFilters" method="get" class="plp-controls">
+    {%- comment -%} preserve sort across filter clicks {%- endcomment -%}
+    <button type="button" class="plp-filterbtn" data-mobile-filters>{% render 'icon', name: 'check', size: 15 %} Sort &amp; Filter</button>
+
+    <div class="plp-facets">
+      {%- for filter in collection.filters -%}
+        <div class="facet">
+          <button type="button" class="facet__btn {% if filter.active_values.size > 0 %}is-active{% endif %}">
+            {{ filter.label }}{% if filter.active_values.size > 0 %} ({{ filter.active_values.size }}){% endif %} {% render 'icon', name: 'chevron-down', size: 14 %}
+          </button>
+          <div class="facet__menu">
+            {%- if filter.active_values.size > 0 -%}
+              <a href="{{ filter.url_to_remove }}">Clear {{ filter.label }}</a>
+            {%- endif -%}
+            {%- for value in filter.values -%}
+              <a href="{{ value.url_to_add }}" class="{% if value.active %}is-active{% endif %}">
+                <span>{{ value.label }}</span>
+                {%- if value.active -%}{% render 'icon', name: 'check', size: 14 %}{%- endif -%}
+              </a>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <div class="plp-right">
+      {%- if collection.sort_options.size > 0 -%}
+        <div class="facet" style="position:static">
+          <select name="sort_by" onchange="this.form.submit()" style="border:none;background:none;font-size:.875rem;color:var(--muted);cursor:pointer">
+            {%- assign sort_default = collection.sort_by | default: collection.default_sort_by -%}
+            {%- for option in collection.sort_options -%}
+              <option value="{{ option.value }}" {% if option.value == sort_default %}selected{% endif %}>{{ option.name }}</option>
+            {%- endfor -%}
+          </select>
+        </div>
+      {%- endif -%}
+      <span class="plp-count" aria-live="polite">{{ collection.products_count }} Product{% if collection.products_count != 1 %}s{% endif %}</span>
+    </div>
+
+    {%- comment -%} Mobile facet panel (same filter links) {%- endcomment -%}
+    <div class="plp-mobile-filters" style="display:none">
+      {%- for filter in collection.filters -%}
+        <div class="facet">
+          <p class="eyebrow" style="margin-bottom:8px">{{ filter.label }}</p>
+          {%- for value in filter.values -%}
+            <a href="{{ value.url_to_add }}" class="plp-tab {% if value.active %}is-active{% endif %}" style="display:inline-block;margin-right:12px">{{ value.label }}</a>
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </form>
+
+  {%- if section.settings.intro != blank -%}
+    <div class="plp-intro rte">{{ section.settings.intro }}</div>
+  {%- endif -%}
+
+  {%- comment -%} ---- Grid ---- {%- endcomment -%}
+  {%- paginate collection.products by per_page -%}
+    {%- if collection.products.size == 0 -%}
+      <div class="plp-empty">
+        <p>No perfumes found</p>
+        <p class="muted" style="margin-top:8px">Try adjusting your filters or search.</p>
+      </div>
+    {%- else -%}
+      <div class="plp-grid">
+        {%- assign member_at = 7 -%}
+        {%- for product in collection.products -%}
+          {% render 'product-card', product: product %}
+          {%- if forloop.index == member_at -%}
+            {% render 'promo-members' %}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if collection.products.size <= member_at -%}
+          {% render 'promo-members' %}
+        {%- endif -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <div class="plp-loadmore">
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}" class="btn btn--outline btn--coral" style="padding-left:64px;padding-right:64px">Load More Products</a>
+          {%- else -%}
+            <span class="plp-count">You&rsquo;ve reached the end.</span>
+          {%- endif -%}
+        </div>
+        <div style="margin-top:16px;text-align:center">{{ paginate | default_pagination }}</div>
+      {%- endif -%}
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "Collection grid",
+  "settings": [
+    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 8, "max": 24, "step": 4, "default": 12 },
+    { "type": "richtext", "id": "intro", "label": "Intro text" }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Sub-nav tab",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "All Perfumes" },
+        { "type": "url", "id": "url", "label": "Link" },
+        { "type": "text", "id": "collection", "label": "Active when collection handle =", "info": "Handle that highlights this tab (e.g. impressions)." }
+      ]
+    }
+  ],
+  "presets": [ { "name": "Collection grid" } ]
+}
+{% endschema %}

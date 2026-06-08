@@ -1,0 +1,24 @@
+{%- comment -%} Centered CTA with two buttons {%- endcomment -%}
+<section class="about-cta">
+  <h2>{{ section.settings.heading }}</h2>
+  {%- if section.settings.subtext != blank -%}<p>{{ section.settings.subtext }}</p>{%- endif -%}
+  <div class="about-cta__btns">
+    {%- if section.settings.cta1_label != blank -%}<a href="{{ section.settings.cta1_url }}" class="btn btn--solid btn--lg">{{ section.settings.cta1_label }}</a>{%- endif -%}
+    {%- if section.settings.cta2_label != blank -%}<a href="{{ section.settings.cta2_url }}" class="btn btn--outline btn--lg">{{ section.settings.cta2_label }}</a>{%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "CTA banner",
+  "settings": [
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Find the one that&rsquo;s <strong>yours</strong></p>" },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Take the 30-second scent quiz, or sample the whole collection with our Discovery Kit." },
+    { "type": "text", "id": "cta1_label", "label": "Button 1 label", "default": "Find Your Scent" },
+    { "type": "url", "id": "cta1_url", "label": "Button 1 link" },
+    { "type": "text", "id": "cta2_label", "label": "Button 2 label", "default": "Shop All" },
+    { "type": "url", "id": "cta2_url", "label": "Button 2 link" }
+  ],
+  "presets": [ { "name": "CTA banner" } ]
+}
+{% endschema %}
