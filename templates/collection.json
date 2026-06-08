@@ -1,9 +1,18 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "main-collection",
       "blocks": {
-        "all": { "type": "tab", "settings": { "label": "All Perfumes", "url": "shopify://collections/all", "collection": "all" } },
+        "all": { "type": "tab", "settings": { "label": "All Perfumes", "url": "shopify://collections/all-perfumes", "collection": "all-perfumes" } },
         "impressions": { "type": "tab", "settings": { "label": "Impressions", "url": "shopify://collections/impressions", "collection": "impressions" } },
         "originals": { "type": "tab", "settings": { "label": "Originals", "url": "shopify://collections/originals", "collection": "originals" } },
         "giftsets": { "type": "tab", "settings": { "label": "Gift Sets", "url": "shopify://pages/discovery-kit", "collection": "gift-sets" } },

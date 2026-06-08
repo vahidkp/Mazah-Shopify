@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "footer",
   "name": "Footer group",
@@ -7,19 +16,27 @@
       "blocks": {
         "discover": {
           "type": "column",
-          "settings": { "title": "Discover.", "menu": "footer" }
+          "settings": { "title": "Discover.", "menu": "footer-discover" }
         },
         "help": {
           "type": "column",
-          "settings": { "title": "Help.", "menu": "footer" }
+          "settings": { "title": "Help.", "menu": "footer-help" }
         },
         "more": {
           "type": "column",
-          "settings": { "title": "More.", "menu": "footer" }
+          "settings": {
+            "title": "More.",
+            "menu": "footer-more",
+            "show_app_badges": true,
+            "app_store_url": "#",
+            "play_store_url": "#"
+          }
         }
       },
       "block_order": ["discover", "help", "more"],
-      "settings": {}
+      "settings": {
+        "legal_menu": "footer-legal"
+      }
     }
   },
   "order": ["footer"]

@@ -24,8 +24,16 @@
   {%- endif -%}
 
   {%- comment -%} ---- Filter / sort bar (one GET form) ---- {%- endcomment -%}
-  <form id="CollectionFilters" method="get" class="plp-controls">
+  <div class="plp-controls">
+    {%- comment -%} ---- Search scents/brands/ingredients ---- {%- endcomment -%}
+    <form class="plp-search" action="{{ routes.search_url }}" method="get" role="search">
+      {% render 'icon', name: 'search', size: 15 %}
+      <input type="search" name="q" placeholder="Search scents, brands, ingredients" aria-label="Search scents, brands, ingredients">
+      <input type="hidden" name="type" value="product">
+    </form>
+
     {%- comment -%} preserve sort across filter clicks {%- endcomment -%}
+    <form id="CollectionFilters" method="get" class="plp-filterform" style="display:contents">
     <button type="button" class="plp-filterbtn" data-mobile-filters>{% render 'icon', name: 'check', size: 15 %} Sort &amp; Filter</button>
 
     <div class="plp-facets">
@@ -74,7 +82,8 @@
         </div>
       {%- endfor -%}
     </div>
-  </form>
+    </form>
+  </div>
 
   {%- if section.settings.intro != blank -%}
     <div class="plp-intro rte">{{ section.settings.intro }}</div>
@@ -89,6 +98,26 @@
       </div>
     {%- else -%}
       <div class="plp-grid">
+        {%- if section.settings.editorial_enable and paginate.current_page == 1 -%}
+          {%- assign ed_img = section.settings.editorial_image -%}
+          <a href="{{ section.settings.editorial_link | default: routes.all_products_collection_url }}" class="promo-duo">
+            <div>
+              <p class="promo-duo__title">{{ section.settings.editorial_title | default: 'Midnight Bloom & Rose Noir' }}</p>
+              <p class="promo-duo__sub">{{ section.settings.editorial_subtitle | default: 'Inspired by Chanel and Frederic Malle' }}</p>
+            </div>
+            <div class="promo-duo__imgs">
+              {%- if ed_img -%}
+                <img src="{{ ed_img | image_url: width: 600 }}" alt="{{ section.settings.editorial_title | default: 'Editorial' | escape }}" loading="lazy">
+              {%- else -%}
+                <img src="{{ 'midnight-bloom-2.png' | asset_url }}" alt="{{ section.settings.editorial_title | default: 'Editorial' | escape }}" loading="lazy">
+              {%- endif -%}
+            </div>
+            <div class="promo-duo__foot">
+              <span class="promo-duo__badge">{{ section.settings.editorial_badge | default: 'New' }}</span>
+              <span class="promo-duo__shop">Shop Now</span>
+            </div>
+          </a>
+        {%- endif -%}
         {%- assign member_at = 7 -%}
         {%- for product in collection.products -%}
           {% render 'product-card', product: product %}
@@ -120,7 +149,14 @@
   "name": "Collection grid",
   "settings": [
     { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 8, "max": 24, "step": 4, "default": 12 },
-    { "type": "richtext", "id": "intro", "label": "Intro text" }
+    { "type": "richtext", "id": "intro", "label": "Intro text" },
+    { "type": "header", "content": "Editorial card (first tile)" },
+    { "type": "checkbox", "id": "editorial_enable", "label": "Show editorial card", "default": true },
+    { "type": "text", "id": "editorial_title", "label": "Title", "default": "Midnight Bloom & Rose Noir" },
+    { "type": "text", "id": "editorial_subtitle", "label": "Subtitle", "default": "Inspired by Chanel and Frederic Malle" },
+    { "type": "image_picker", "id": "editorial_image", "label": "Image (falls back to bundled asset)" },
+    { "type": "text", "id": "editorial_badge", "label": "Badge", "default": "New" },
+    { "type": "url", "id": "editorial_link", "label": "Shop Now link" }
   ],
   "blocks": [
     {
