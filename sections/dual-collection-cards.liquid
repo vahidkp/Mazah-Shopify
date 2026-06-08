@@ -8,6 +8,10 @@
       </div>
       {%- if block.settings.image -%}
         <img class="duo-card__img blend-multiply" src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.title | escape }}" loading="lazy" width="300" height="400">
+      {%- else -%}
+        {%- assign duo_img = 'feature-bottle.png' -%}
+        {%- if block.settings.title contains 'Originals' -%}{%- assign duo_img = 'hero-bottle.png' -%}{%- endif -%}
+        <img class="duo-card__img blend-multiply" src="{{ duo_img | asset_url }}" alt="{{ block.settings.title | escape }}" loading="lazy" width="300" height="400">
       {%- endif -%}
       <span class="duo-card__arrow">{% render 'icon', name: 'arrow-right', size: 18 %}</span>
     </a>

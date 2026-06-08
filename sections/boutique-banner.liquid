@@ -14,6 +14,8 @@
       {%- if section.settings.image -%}
         {%- assign boutique_alt = section.settings.heading | strip_html -%}
         {{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: boutique_alt, sizes: '(max-width:640px) 100vw, 40vw' }}
+      {%- else -%}
+        <img src="{{ 'editorial-model.jpg' | asset_url }}" alt="{{ section.settings.heading | strip_html }}" loading="lazy" sizes="(max-width:640px) 100vw, 40vw">
       {%- endif -%}
     </div>
   </div>

@@ -14,6 +14,8 @@
     <div class="nextgen__media">
       {%- if section.settings.image -%}
         {{ section.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', class: 'blend-multiply', alt: 'Mazah fragrance', sizes: '(max-width:768px) 80vw, 40vw' }}
+      {%- else -%}
+        <img class="blend-multiply" src="{{ 'feature-bottle.png' | asset_url }}" alt="Mazah fragrance" loading="lazy" sizes="(max-width:768px) 80vw, 40vw">
       {%- endif -%}
     </div>
   </div>

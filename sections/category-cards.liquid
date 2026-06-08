@@ -4,6 +4,9 @@
     <a href="{{ block.settings.url }}" class="cat-card" {{ block.shopify_attributes }}>
       {%- if block.settings.image -%}
         {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', alt: block.settings.label, sizes: '(max-width:640px) 100vw, 33vw', widths: '400,600,800' }}
+      {%- else -%}
+        {%- assign cat_img = 'model-' | append: block.settings.label | downcase | append: '.jpg' -%}
+        <img src="{{ cat_img | asset_url }}" alt="{{ block.settings.label }}" loading="lazy" sizes="(max-width:640px) 100vw, 33vw">
       {%- endif -%}
       <div class="cat-card__scrim"></div>
       <span class="cat-card__label">{{ block.settings.label }}</span>
