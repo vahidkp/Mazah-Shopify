@@ -850,3 +850,74 @@ body.cart-open .cart-drawer { transform: translateX(0); }
   .reveal { opacity: 1; transform: none; transition: none; }
   * { scroll-behavior: auto !important; }
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVE HARDENING (320px and up)
+   Mobile-first safety + small-screen tuning. Affects mobile/tablet only;
+   the desktop (>=1024px) layout is intentionally left unchanged.
+   ========================================================================== */
+
+/* --- 1. Kill horizontal scroll; keep every section inside the viewport --- */
+html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+body { position: relative; }
+img, svg, video, canvas, iframe { max-width: 100%; }
+
+/* --- 2. Flex/grid children shrink instead of forcing the row wider --- */
+.plp-grid > *, .related__grid > *, .cat-cards > *, .duo-cards > *,
+.about-values__grid > *, .dk-inside__grid > *, .pdp-features__grid > *,
+.scent__notes > *, .reviews__grid > *, .footer-main > *, .carousel__track > *,
+.pinfo__addrow > *, .pinfo__price > *, .pc, .promo-duo, .promo-members,
+.pdp-feature, .value-card, .dk-sample, .cart-line, .cart-line__body,
+.review, .review__body, .duo-card__copy, .nextgen__copy { min-width: 0; }
+
+/* --- 3. Long names, prices and copy wrap instead of overflowing --- */
+.pc__name, .pc__inspired, .pc__price, .product-name, .promo-duo__title,
+.promo-duo__sub, .pinfo__title, .pinfo__inspired, .review__title, .review__text,
+.review__author, .scent__descriptor, .carousel__title, .duo-card__title,
+.boutique__title, .nextgen__title, .hero__title, .footer-col a,
+.breadcrumb .current { overflow-wrap: break-word; }
+
+/* --- 4. Standard phones (390-430): 20px container padding --- */
+@media (min-width: 390px) and (max-width: 639px) {
+  .container-page, .container-wide,
+  .plp, .pdp-hero, .reviews__inner, .cart-page, .page-shell, .related,
+  .hero__content { padding-left: 20px; padding-right: 20px; }
+}
+
+/* --- 5. Phones (<1024): tidy the collection filter bar --- */
+@media (max-width: 1023px) {
+  .plp-search { flex: 1 1 100%; max-width: none; order: -1; }
+  .plp-controls { row-gap: 12px; }
+}
+
+/* --- 6. Phones (<640): announcement bar wraps without clipping; full-width CTAs --- */
+@media (max-width: 639px) {
+  .announcement__inner { height: auto; min-height: 36px; padding: 7px 12px; }
+  .announcement__center { font-size: 11px; line-height: 1.3; }
+  .hero__content { padding-left: 16px; padding-right: 16px; }
+  .hero__cta { width: 100%; }
+  .hero__cta .btn { flex: 1 1 auto; }
+  .about-cta__btns .btn, .dk-info__btns .btn { width: 100%; }
+}
+
+/* --- 7. Product card text stays readable at 2-up on small phones --- */
+@media (max-width: 399px) {
+  .pc__name { font-size: 14px; }
+  .pc__price .member-val { margin-left: 0; display: inline-block; }
+}
+
+/* --- 8. iPhone SE / very small phones (<=359px): scale display type down --- */
+@media (max-width: 359px) {
+  .hero__title { font-size: 1.75rem; }
+  .nextgen__title { font-size: 1.5rem; }
+  .pinfo__title { font-size: 1.5rem; }
+  .page-hero h1, .dk-info h1, .cart-page h1, .page-shell h1 { font-size: 1.875rem; }
+  .notfound h1 { font-size: 2.25rem; }
+  .reviews__big .num { font-size: 2.25rem; }
+  .promo-members__title { font-size: 1.25rem; }
+  .footer-wordmark { font-size: 1.5rem; }
+  .carousel__title, .related__title { font-size: 1.25rem; }
+  .sizes .size-btn { flex: 1 1 auto; min-width: 0; justify-content: center; }
+  .pdp-newlook { grid-template-columns: 1fr; }
+  .pdp-newlook__media { min-height: 140px; }
+}
