@@ -19,7 +19,7 @@
       "type": "header",
       "settings": {
         "menu_perfumes": "header-perfumes",
-        "menu_about": "footer",
+        "menu_about": "header-about",
         "home_scents_url": "shopify://pages/discovery-kit",
         "quiz_url": "shopify://pages/quiz",
         "shop_all_url": "shopify://collections/all"

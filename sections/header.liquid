@@ -114,13 +114,27 @@
     </form>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       {%- for col in perfumes_menu.links -%}
-        {%- for link in col.links limit: 2 -%}
+        {%- if col.links.size > 0 -%}
+          <p class="mobile-menu__group">{{ col.title }}</p>
+          {%- for link in col.links -%}
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          {%- endfor -%}
+        {%- else -%}
+          <a href="{{ col.url }}">{{ col.title }}</a>
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if section.settings.home_scents_url != blank -%}
+        <a href="{{ section.settings.home_scents_url }}">{{ section.settings.home_scents_label | default: 'Home Scents' }}</a>
+      {%- endif -%}
+      {%- if section.settings.quiz_url != blank -%}
+        <a href="{{ section.settings.quiz_url }}">{{ section.settings.quiz_label | default: 'AI Scent Finder' }}</a>
+      {%- endif -%}
+      {%- if about_menu.links.size > 0 -%}
+        <p class="mobile-menu__group">{{ section.settings.about_label | default: 'About' }}</p>
+        {%- for link in about_menu.links -%}
           <a href="{{ link.url }}">{{ link.title }}</a>
         {%- endfor -%}
-      {%- endfor -%}
-      {%- for link in about_menu.links -%}
-        <a href="{{ link.url }}">{{ link.title }}</a>
-      {%- endfor -%}
+      {%- endif -%}
     </nav>
     <a href="{{ section.settings.shop_all_url | default: '/collections/all' }}" class="btn-solid" style="width:100%;margin-top:24px">Shop All</a>
   </div>
